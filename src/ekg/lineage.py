@@ -94,6 +94,7 @@ def build(pipeline: dict, generated: dict[str, pd.DataFrame], lake_columns: dict
     jobs: dict[str, dict] = {}
     reads: list[dict] = []
     produced: list[dict] = []
+    derived: list[dict] = []     # Table-DERIVED_FROM->Table: precise where the job is a copy, coarse (every write from every read) otherwise
     for j in pipeline["jobs"]:
         jobs[j["job_id"]] = {"job_id": j["job_id"], "name": j["name"], "entrypoint": j["entrypoint"], "repo": j["repo"],
                              "module": j.get("module"), "schedule": j.get("schedule"), "status": "real", "source": "declared"}
@@ -101,6 +102,12 @@ def build(pipeline: dict, generated: dict[str, pd.DataFrame], lake_columns: dict
         writes = list(j.get("writes", []))
         if j.get("writes_warehouse"):
             writes += [f"pg.{t}" for t in pipeline["warehouse_tables"]]
+            derived += [{"src": f"pg.{t}", "dst": t, "via": j["job_id"], "precision": "copy"} for t in pipeline["warehouse_tables"] if t in j.get("reads", [])]
+            derived += [{"src": "pg.telemetry_drive_summary", "dst": "drive_summary", "via": j["job_id"], "precision": "copy"},
+                        {"src": "pg.telemetry_daily_recent", "dst": "telemetry_daily", "via": j["job_id"], "precision": "copy"},
+                        {"src": "pg.drive_model", "dst": "drive_model", "via": j["job_id"], "precision": "copy"}]
+        else:
+            derived += [{"src": w, "dst": r, "via": j["job_id"], "precision": "job"} for w in writes for r in j.get("reads", [])]
         produced += [{"src": t, "dst": j["job_id"]} for t in writes]
     # generated job.csv / lineage.csv: keep the rows the declared pipeline does not already cover, marked generated
     gj = generated.get("job")
@@ -110,7 +117,9 @@ def build(pipeline: dict, generated: dict[str, pd.DataFrame], lake_columns: dict
                 jobs[r.job_id] = {"job_id": r.job_id, "name": r.name, "entrypoint": r.entrypoint, "repo": sois_repo, "module": None,
                                   "schedule": r.schedule, "status": "planned" if r.entrypoint == "planned" else "real", "source": "generated"}
     gl = generated.get("lineage")
+    aliases = pipeline.get("aliases", {})
     if gl is not None:
+        gl = gl.replace({"input_table": aliases, "output_table": aliases})
         for r in gl.itertuples():
             for t in (r.input_table, r.output_table):
                 if t not in tables and f"pg.{t}" not in tables:
@@ -118,10 +127,15 @@ def build(pipeline: dict, generated: dict[str, pd.DataFrame], lake_columns: dict
                                  "store": "planned", "gitignored": False, "note": "named in lineage.csv but not materialized", "columns": 0}
             inp = r.input_table if r.input_table in tables else f"pg.{r.input_table}"
             outp = r.output_table if r.output_table in tables else f"pg.{r.output_table}"
-            if {"src": r.job_id, "dst": inp} not in reads:
+            produces = {p["src"] for p in produced if p["dst"] == r.job_id}
+            # a row "A -> B" inside a job is derivation, not a read of its own output
+            if inp not in produces and {"src": r.job_id, "dst": inp} not in reads:
                 reads.append({"src": r.job_id, "dst": inp})
             if {"src": outp, "dst": r.job_id} not in produced:
                 produced.append({"src": outp, "dst": r.job_id})
+            e = {"src": outp, "dst": inp, "via": r.job_id, "precision": "declared_row"}
+            if e not in derived:
+                derived.append(e)
 
     dps: list[dict] = []
     composed: list[dict] = []
@@ -151,12 +165,20 @@ def build(pipeline: dict, generated: dict[str, pd.DataFrame], lake_columns: dict
                 means.append({"src": f"{tname}.{col}", "dst": term})
     stored: list[dict] = [{"src": term, "dst": t} for term, ts in pipeline["term_tables"].items() for t in ts if t in tables]
     stored += [{"src": term, "dst": f"pg.{t}"} for term, ts in pipeline["term_tables"].items() for t in ts if f"pg.{t}" in tables]
+    derived = [d for d in derived if d["src"] in tables and d["dst"] in tables and d["src"] != d["dst"]]
     return {"tables": list(tables.values()), "columns": columns, "jobs": list(jobs.values()), "reads": reads, "produced": produced,
-            "data_products": dps, "composed": composed, "queries": queries, "query_reads": qreads, "means": means, "stored": stored}
+            "derived": derived, "data_products": dps, "composed": composed, "queries": queries, "query_reads": qreads, "means": means, "stored": stored}
+
+
+METADATA_EDGES = ("BELONGS_TO", "READS", "PRODUCED_BY", "DERIVED_FROM", "COMPOSED_OF", "MEANS", "STORED_IN")
 
 
 def write(session, rows: dict[str, list[dict]], log=print) -> dict[str, int]:
+    """Rebuilds the metadata layer: its edge types are deleted first so a changed declaration
+    cannot leave a stale edge behind (MERGE alone never removes anything)."""
     graph.ensure_schema(session)
+    for rel in METADATA_EDGES:
+        session.run(f"MATCH ()-[r:{rel}]->() DELETE r").consume()
     c: dict[str, int] = {}
     c["Table"] = graph.write_nodes(session, "Table", "name", rows["tables"])
     c["Column"] = graph.write_nodes(session, "Column", "column_key", rows["columns"])
@@ -167,6 +189,7 @@ def write(session, rows: dict[str, list[dict]], log=print) -> dict[str, int]:
                                         [{"src": x["column_key"], "dst": x["table"]} for x in rows["columns"]])
     c["READS(job)"] = graph.write_edges(session, "Job", "job_id", "READS", "Table", "name", rows["reads"])
     c["PRODUCED_BY"] = graph.write_edges(session, "Table", "name", "PRODUCED_BY", "Job", "job_id", rows["produced"])
+    c["DERIVED_FROM"] = graph.write_edges(session, "Table", "name", "DERIVED_FROM", "Table", "name", rows["derived"], props=("via", "precision"))
     c["COMPOSED_OF"] = graph.write_edges(session, "DataProduct", "data_product_id", "COMPOSED_OF", "Table", "name", rows["composed"])
     c["READS(query)"] = graph.write_edges(session, "Query", "query_id", "READS", "Table", "name", rows["query_reads"])
     c["MEANS"] = graph.write_edges(session, "Column", "column_key", "MEANS", "Term", "term_id", rows["means"])
@@ -181,26 +204,33 @@ def write(session, rows: dict[str, list[dict]], log=print) -> dict[str, int]:
 
 # ---------------------------------------------------------------- the two questions
 PROVENANCE = """
-// Where did this number come from: every job and dataset upstream of one column.
+// Where did this number come from: the column, what it means, the job that wrote its table,
+// and every dataset upstream through Table-DERIVED_FROM->Table, with the job that produced each.
 MATCH (c:Column {column_key: $column_key})-[:BELONGS_TO]->(t:Table)
 OPTIONAL MATCH (c)-[:MEANS]->(term:Term)
-MATCH p = (t)-[:PRODUCED_BY|READS*1..12]->(up)
-WITH c, t, term, up, min(length(p)) AS depth
-RETURN c.column_key AS column, t.name AS table, term.label AS means, term.definition AS definition,
-       collect({depth: depth, node: coalesce(up.name, up.job_id), type: labels(up)[0], kind: coalesce(up.kind, up.entrypoint), source: up.source})
-       AS upstream
+OPTIONAL MATCH (t)-[:PRODUCED_BY]->(j:Job)
+WITH c, t, term, collect(DISTINCT j.name) AS producers
+OPTIONAL MATCH p = (t)-[:DERIVED_FROM*1..12]->(up:Table)
+WITH c, t, term, producers, up, min(length(p)) AS depth
+OPTIONAL MATCH (up)-[:PRODUCED_BY]->(uj:Job)
+WITH c, t, term, producers, up, depth, collect(DISTINCT uj.name) AS via
+RETURN c.column_key AS column, t.name AS table, producers, term.label AS means, term.definition AS definition,
+       [x IN collect({depth: depth, node: up.name, kind: up.kind, source: up.source, produced_by: via}) WHERE x.node IS NOT NULL] AS upstream
 """
 IMPACT = """
-// What breaks if this table changes: the downstream closure.
+// What breaks if this table changes: downstream tables through DERIVED_FROM, the jobs that read any of
+// them (they must re-run), the data products built on them, and the logged queries that touch them.
 MATCH (t:Table {name: $table})
-OPTIONAL MATCH p = (t)<-[:READS|PRODUCED_BY*1..12]-(x)
-WHERE x:Job OR x:Table
-WITH t, x, min(length(p)) AS depth
-WITH t, collect(CASE WHEN x IS NULL THEN NULL ELSE {depth: depth, node: coalesce(x.name, x.job_id), type: labels(x)[0]} END) AS downstream
-OPTIONAL MATCH (dp:DataProduct)-[:COMPOSED_OF]->(dt:Table) WHERE dt = t OR dt.name IN [d IN downstream WHERE d.type = 'Table' | d.node]
-WITH t, downstream, collect(DISTINCT dp.name) AS data_products
-OPTIONAL MATCH (q:Query)-[:READS]->(qt:Table) WHERE qt = t OR qt.name IN [d IN downstream WHERE d.type = 'Table' | d.node]
-RETURN t.name AS table, downstream, data_products, count(DISTINCT q) AS logged_queries,
+OPTIONAL MATCH p = (t)<-[:DERIVED_FROM*1..12]-(d:Table)
+WITH t, d, min(length(p)) AS depth
+WITH t, [x IN collect({depth: depth, node: d.name, kind: d.kind}) WHERE x.node IS NOT NULL] AS downstream
+WITH t, downstream, [t.name] + [x IN downstream | x.node] AS affected
+OPTIONAL MATCH (j:Job)-[:READS]->(a:Table) WHERE a.name IN affected
+WITH t, downstream, affected, collect(DISTINCT j.name) AS jobs
+OPTIONAL MATCH (dp:DataProduct)-[:COMPOSED_OF]->(b:Table) WHERE b.name IN affected
+WITH t, downstream, affected, jobs, collect(DISTINCT dp.name) AS data_products
+OPTIONAL MATCH (q:Query)-[:READS]->(qt:Table) WHERE qt.name IN affected
+RETURN t.name AS table, downstream, jobs, data_products, count(DISTINCT q) AS logged_queries,
        collect(DISTINCT q.user_name) AS query_users
 """
 
@@ -219,24 +249,27 @@ def impact(session, table: str) -> dict | None:
     if rec is None:
         return None
     d = dict(rec)
-    d["downstream"] = sorted([x for x in d["downstream"] if x], key=lambda u: (u["depth"], u["node"]))
+    d["downstream"] = sorted(d["downstream"], key=lambda u: (u["depth"], u["node"]))
+    d["jobs"] = sorted(j for j in d["jobs"] if j)
     d["query_users"] = sorted(u for u in d["query_users"] if u)
     return d
 
 
 def format_provenance(d: dict) -> str:
-    lines = [f"{d['column']}  (table {d['table']})"]
+    lines = [f"{d['column']}  (table {d['table']}, written by {', '.join(d['producers']) or 'unknown'})"]
     if d.get("means"):
         lines.append(f"  means: {d['means']}: {d['definition']}")
     for u in d["upstream"]:
-        lines.append(f"  {'  ' * (u['depth'] - 1)}<- [{u['type']}] {u['node']} ({u['kind']}{', ' + u['source'] if u.get('source') else ''})")
+        via = f", by {', '.join(u['produced_by'])}" if u.get("produced_by") else ""
+        lines.append(f"  {'  ' * (u['depth'] - 1)}<- {u['node']} ({u['kind']}{', ' + u['source'] if u.get('source') else ''}{via})")
     return "\n".join(lines)
 
 
 def format_impact(d: dict) -> str:
     lines = [f"{d['table']}"]
     for u in d["downstream"]:
-        lines.append(f"  {'  ' * (u['depth'] - 1)}-> [{u['type']}] {u['node']}")
+        lines.append(f"  {'  ' * (u['depth'] - 1)}-> {u['node']} ({u['kind']})")
+    lines.append(f"  jobs that must re-run: {', '.join(d['jobs']) or 'none'}")
     lines.append(f"  data products affected: {', '.join(d['data_products']) or 'none'}")
     lines.append(f"  logged queries affected: {d['logged_queries']} (users: {', '.join(d['query_users']) or 'none'})")
     return "\n".join(lines)

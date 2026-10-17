@@ -1,0 +1,7 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "created": "2026-10-17T08:58:34.819613+00:00",
+  "messages_sha256": "eb16142bf6e3ae4a96702818701e371de23cd8eefb88ee78f1b86df79455653f",
+  "response": "```cypher\nMATCH (t:Technician)-[:PERFORMS]->(d:Dispatch)\nRETURN t.technician_id AS technician_id, COUNT(d) AS dispatch_count\nORDER BY dispatch_count DESC, t.technician_id\nLIMIT 1\n```"
+}

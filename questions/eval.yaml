@@ -1,0 +1,131 @@
+questions:
+- id: q01
+  question: How many installed assets are in the graph?
+  cypher: MATCH (a:Asset) RETURN count(a) AS assets
+  expected_hash: d73d5d3d71e4830f0c399c10eaefbb63b46e24bfc4703ece316120a634476404
+  expected_rows: 1
+  expected_preview: '[{"assets": 359101}]'
+- id: q02
+  question: How many resolved accounts (distinct companies) are there?
+  cypher: MATCH (a:Account) RETURN count(a) AS accounts
+  expected_hash: 8a0b3c54c695711f7361025213118747af5ef222effcdbf843575afd2b1ef2ed
+  expected_rows: 1
+  expected_preview: '[{"accounts": 239}]'
+- id: q03
+  question: Which 5 sites host the most assets? Return site_id and the asset count.
+  cypher: MATCH (s:Site)-[:HOSTS]->(a:Asset) RETURN s.site_id AS site_id, count(a) AS assets ORDER BY assets DESC, site_id
+    LIMIT 5
+  expected_hash: 115af728fd53d8a8ce0ae4038bbe8751d29e7e20ee7c232e193a1e400637b583
+  expected_rows: 5
+  expected_preview: '[{"site_id": "SITE-00394", "assets": 4209}, {"site_id": "SITE-00676", "assets": 4203}, {"site_id": "SITE-00327",
+    "assets": 4194}]'
+- id: q04
+  question: How many drives had a telemetry failure?
+  cypher: 'MATCH (d:Drive {failed: 1}) RETURN count(d) AS failed_drives'
+  expected_hash: d749b444e2584fb2c8db45ebf5b3f355765fd5ef4bfb00f13419242a6c7cd08d
+  expected_rows: 1
+  expected_preview: '[{"failed_drives": 1522}]'
+- id: q05
+  question: How many cases are service failures in the support sense?
+  cypher: 'MATCH (c:Case {failure_reported: 1}) RETURN count(c) AS service_failures'
+  expected_hash: 70b7012904df90fb79888ac028c8be38930549337aaa5fddfb55557e2074d36b
+  expected_rows: 1
+  expected_preview: '[{"service_failures": 2330}]'
+- id: q06
+  question: How many cases are there per category? Return category and count, highest first.
+  cypher: MATCH (c:Case) RETURN c.category AS category, count(c) AS cases ORDER BY cases DESC, category
+  expected_hash: aadfd88a6c172d435a15ff7ea4769a24893b5fd01236bc0ff54acfbae36edf19
+  expected_rows: 8
+  expected_preview: '[{"category": "drive_failure", "cases": 1957}, {"category": "how_to", "cases": 1475}, {"category": "config",
+    "cases": 1180}]'
+- id: q07
+  question: Which technician performed the most dispatches? Return technician_id and the count.
+  cypher: MATCH (t:Technician)-[:PERFORMS]->(d:Dispatch) RETURN t.technician_id AS technician_id, count(d) AS dispatches ORDER
+    BY dispatches DESC, technician_id LIMIT 1
+  expected_hash: 3075cbe0f29521358052496c24356bb5c4d4481558b97dbca377b7539b52615e
+  expected_rows: 1
+  expected_preview: '[{"technician_id": "TEC-0079", "dispatches": 94}]'
+- id: q08
+  question: How many dispatches are repeat visits on the same case (visit number greater than 1)?
+  cypher: MATCH (d:Dispatch) WHERE d.visit_number > 1 RETURN count(d) AS repeat_dispatches
+  expected_hash: e0b7a47b800a8f1e4317f2b19ad593904946972c977e584cc1782ec07e2054c8
+  expected_rows: 1
+  expected_preview: '[{"repeat_dispatches": 1001}]'
+- id: q09
+  question: What is the average parts lead time in days across all suppliers of the part with part_number HDD-SLED-12T?
+  cypher: 'MATCH (p:Part {part_number: ''HDD-SLED-12T''})-[s:SUPPLIED_BY]->(:Supplier) RETURN avg(s.lead_time_days) AS avg_lead_time_days'
+  expected_hash: e6944821013c8bc231688eebe1a1d1cd6e40428b2d654353b4134e7d3c20c822
+  expected_rows: 1
+  expected_preview: '[{"avg_lead_time_days": 16.666666666666668}]'
+- id: q10
+  question: Which parts have exactly one supplier? Return their part numbers.
+  cypher: MATCH (p:Part)-[:SUPPLIED_BY]->(s:Supplier) WITH p, count(s) AS suppliers WHERE suppliers = 1 RETURN p.part_number
+    AS part_number ORDER BY part_number
+  expected_hash: 92b2f9baad8d47ce207ada9c9ceb6d179d608c2dc890788baeeed78ae24606b6
+  expected_rows: 8
+  expected_preview: '[{"part_number": "BACKPLANE-24"}, {"part_number": "BBU-CTRL"}, {"part_number": "CABLE-DAC"}]'
+- id: q11
+  question: Which 3 drive models have the most failed drives? Return the model and the number of failed drives.
+  cypher: 'MATCH (d:Drive {failed: 1})-[:OF_MODEL]->(m:DriveModel) RETURN m.model AS model, count(d) AS failed ORDER BY failed
+    DESC, model LIMIT 3'
+  expected_hash: 37994747659aeb2302c8a33c831fc068c08b53960475fd5a9f66fedd653bdeb6
+  expected_rows: 3
+  expected_preview: '[{"model": "HGST HUH721212ALN604", "failed": 180}, {"model": "TOSHIBA MG07ACA14TA", "failed": 179}, {"model":
+    "ST12000NM0008", "failed": 145}]'
+- id: q12
+  question: How many pods are flagged as risky pods?
+  cypher: 'MATCH (p:Pod {risky: true}) RETURN count(p) AS risky_pods'
+  expected_hash: 9a5bf9515735a96a3a4c955da532d722166d3e38b5f99fc2f770ceae8e2d5ce5
+  expected_rows: 1
+  expected_preview: '[{"risky_pods": 307}]'
+- id: q13
+  question: How many installed assets have an unknown warranty status?
+  cypher: MATCH (a:Asset) WHERE a.warranty_end IS NULL RETURN count(a) AS unknown_warranty
+  expected_hash: b1951facd621b781f56834287dc29a26e67822ac779d8d2a985ea65306cf2465
+  expected_rows: 1
+  expected_preview: '[{"unknown_warranty": 35769}]'
+- id: q14
+  question: How many CRM account records resolve to the account with account_id ACC-00009?
+  cypher: 'MATCH (r:AccountRecord)-[:SAME_AS]->(a:Account {account_id: ''ACC-00009''}) RETURN count(r) AS records'
+  expected_hash: 13abdcec529ea3bf1045f5eb4256d41b4953e4311b0de627474054d8810ff934
+  expected_rows: 1
+  expected_preview: '[{"records": 3}]'
+- id: q15
+  question: How many cases are about assets hosted at sites of the account ACC-00009?
+  cypher: 'MATCH (:Account {account_id: ''ACC-00009''})-[:HAS]->(:Site)-[:HOSTS]->(:Asset)<-[:ABOUT]-(c:Case) RETURN count(c)
+    AS cases'
+  expected_hash: aa6885079e7ed8ca6ff962f5c1f6d44f5dd0ba9e476e9158ae65d99a02203c3b
+  expected_rows: 1
+  expected_preview: '[{"cases": 0}]'
+- id: q16
+  question: Which jobs read the installed_asset table? Return the job names.
+  cypher: 'MATCH (j:Job)-[:READS]->(:Table {name: ''installed_asset''}) RETURN j.name AS job ORDER BY job'
+  expected_hash: 26908cdecee9711bf8ac531ffbc4786ab6659d5bf718450d8d8dc1f9a53697ce
+  expected_rows: 7
+  expected_preview: '[{"job": "ekg.load"}, {"job": "ekg.resolve"}, {"job": "ekg.trust"}]'
+- id: q17
+  question: Which data products are composed of the Postgres table pg.site? Return their names.
+  cypher: 'MATCH (dp:DataProduct)-[:COMPOSED_OF]->(:Table {name: ''pg.site''}) RETURN dp.name AS data_product ORDER BY data_product'
+  expected_hash: 8ac07952230fab661a9ed92d3fd7aebededff3637f543c1f492d2572e0cab117
+  expected_rows: 3
+  expected_preview: '[{"data_product": "dispatch_quality"}, {"data_product": "fleet_health"}, {"data_product": "parts_demand"}]'
+- id: q18
+  question: Which columns carry the meaning of the glossary term 'Failure (telemetry)'? Return the column keys.
+  cypher: 'MATCH (c:Column)-[:MEANS]->(:Term {label: ''Failure (telemetry)''}) RETURN c.column_key AS column_key ORDER BY
+    column_key'
+  expected_hash: baf234ec8d968fb790dbc23120596594f16df67e62c9619d3dc29a5d2ec242b7
+  expected_rows: 6
+  expected_preview: '[{"column_key": "drive_summary.failed"}, {"column_key": "drive_summary.failure_date"}, {"column_key":
+    "pg.telemetry_daily_recent.failure"}]'
+- id: q19
+  question: Which user ran the most logged queries? Return the user name and the number of queries.
+  cypher: MATCH (q:Query) RETURN q.user_name AS user_name, count(q) AS queries ORDER BY queries DESC, user_name LIMIT 1
+  expected_hash: a375e319d4200b9caa9c972a61b42d4743736d3104cae6643967ee21dbe1054c
+  expected_rows: 1
+  expected_preview: '[{"user_name": "analyst_01", "queries": 59}]'
+- id: q20
+  question: How many runbooks cover the product with product_id PRD-SA300?
+  cypher: 'MATCH (r:Runbook)-[:COVERS]->(:Product {product_id: ''PRD-SA300''}) RETURN count(r) AS runbooks'
+  expected_hash: ea2631a70a6a805cad0bde0d7a70a78ad540413b4034ad2b4572aa21ae9c76b1
+  expected_rows: 1
+  expected_preview: '[{"runbooks": 12}]'

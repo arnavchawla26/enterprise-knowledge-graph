@@ -1,0 +1,144 @@
+{
+  "communities": {
+    "window_days": 14,
+    "nodes": 1306,
+    "relationships": 7242,
+    "louvain_communities": 233,
+    "modularity": 0.9777,
+    "wcc_components": 228,
+    "wcc_max_size": 36,
+    "failed_drives_total": 1522,
+    "failed_drives_in_a_community_of_2_or_more": 1306,
+    "communities_of_2_or_more": 233,
+    "largest": [
+      {
+        "community": 535,
+        "drives": 36,
+        "sites": "SITE-00017",
+        "vaults": "1124",
+        "models": "HGST HUH721212ALE604;HGST HUH721212ALN604;WUH721816ALE6L4",
+        "products": "PRD-HC200;PRD-HC400;PRD-RS240;PRD-SA300",
+        "suppliers": "Andes Logistics Parts;Delta Interconnect;Pacific Storage Components",
+        "first_failure": "2026-04-04",
+        "last_failure": "2026-05-30"
+      },
+      {
+        "community": 285,
+        "drives": 33,
+        "sites": "SITE-00636",
+        "vaults": "1127;1178",
+        "models": "HGST HUH721212ALN604;WDC WUH721816ALE6L4",
+        "products": "PRD-HC200;PRD-HC400;PRD-RS240;PRD-SA300",
+        "suppliers": "Andes Logistics Parts;Delta Interconnect;Pacific Storage Components",
+        "first_failure": "2026-04-04",
+        "last_failure": "2026-05-28"
+      },
+      {
+        "community": 268,
+        "drives": 26,
+        "sites": "SITE-00656",
+        "vaults": "1063",
+        "models": "TOSHIBA MG07ACA14TA",
+        "products": "PRD-HC200;PRD-RS240;PRD-SA300",
+        "suppliers": "Delta Interconnect;Pacific Storage Components",
+        "first_failure": "2026-04-02",
+        "last_failure": "2026-06-29"
+      },
+      {
+        "community": 324,
+        "drives": 22,
+        "sites": "SITE-00475",
+        "vaults": "1123",
+        "models": "HGST HUH721212ALN604",
+        "products": "PRD-HC200;PRD-RS240;PRD-SA300",
+        "suppliers": "Delta Interconnect;Pacific Storage Components",
+        "first_failure": "2026-04-06",
+        "last_failure": "2026-05-25"
+      },
+      {
+        "community": 600,
+        "drives": 22,
+        "sites": "SITE-00472",
+        "vaults": "1093;2023",
+        "models": "ST10000NM0086;TOSHIBA MG08ACA16TA",
+        "products": "PRD-HC200;PRD-HC400;PRD-RS240;PRD-SA300",
+        "suppliers": "Andes Logistics Parts;Delta Interconnect;Pacific Storage Components",
+        "first_failure": "2026-04-14",
+        "last_failure": "2026-05-29"
+      }
+    ],
+    "communities_spanning_one_vault": 191,
+    "communities_with_one_drive_model": 154
+  },
+  "centrality": {
+    "nodes": 48,
+    "relationships": 458,
+    "parts": 30,
+    "single_supplier_parts": 8,
+    "top_by_betweenness": [
+      {
+        "part_number": "FAN-80MM",
+        "category": "cooling",
+        "degree": 11.0,
+        "weighted_degree": 19.0,
+        "betweenness": 41.48,
+        "suppliers": 3,
+        "products": 8,
+        "dispatches": 48
+      },
+      {
+        "part_number": "TPM-MOD",
+        "category": "board",
+        "degree": 11.0,
+        "weighted_degree": 17.0,
+        "betweenness": 36.64,
+        "suppliers": 2,
+        "products": 9,
+        "dispatches": 30
+      },
+      {
+        "part_number": "NIC-25G",
+        "category": "network",
+        "degree": 11.0,
+        "weighted_degree": 25.0,
+        "betweenness": 35.3,
+        "suppliers": 3,
+        "products": 8,
+        "dispatches": 66
+      },
+      {
+        "part_number": "HBA-12G",
+        "category": "controller",
+        "degree": 10.0,
+        "weighted_degree": 15.0,
+        "betweenness": 35.17,
+        "suppliers": 3,
+        "products": 7,
+        "dispatches": 36
+      },
+      {
+        "part_number": "RAID-CTRL",
+        "category": "controller",
+        "degree": 10.0,
+        "weighted_degree": 16.0,
+        "betweenness": 27.13,
+        "suppliers": 3,
+        "products": 7,
+        "dispatches": 39
+      }
+    ]
+  },
+  "embeddings": {
+    "nodes": 725744,
+    "relationships": 3604810,
+    "drives_embedded": 359101,
+    "dim": 32,
+    "seed": 20261017,
+    "iteration_weights": [
+      0.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  }
+}

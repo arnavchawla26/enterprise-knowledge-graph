@@ -1,0 +1,37 @@
+# Per-role allow-lists enforced server-side by ekg.api. A caller gets only the
+# tables, columns, terms, documents and graph labels listed for its role; the
+# API never returns something the role is not allowed to see, whatever the
+# question asks for. `deny_columns` removes columns from otherwise allowed
+# tables. Roles are deliberately narrow: a technician sees the support and
+# product side, never CRM contacts or prices; an analyst sees the warehouse
+# but no contact PII; the ops lead sees everything except raw contacts.
+roles:
+  ops_lead:
+    description: Services operations lead; fleet health, dispatches, parts, accounts.
+    tables: ["*"]
+    deny_tables: [contact, pg.contact]
+    labels: ["*"]
+    deny_labels: []
+    deny_columns: []
+    documents: [runbook, glossary]
+    max_neighborhood: 50
+  technician:
+    description: Field technician; cases, dispatches, runbooks, assets and products, parts and lead times.
+    tables: [case, dispatch, dispatch_part, runbook, installed_asset, product, part, part_supplier, supplier, site, technician,
+             pg.case, pg.dispatch, pg.dispatch_part, pg.runbook, pg.installed_asset, pg.product, pg.part, pg.part_supplier, pg.supplier, pg.site, pg.technician]
+    deny_tables: []
+    labels: [Case, Dispatch, Runbook, Asset, Drive, Product, Part, Supplier, Site, Technician, Term, Pod, Vault, DriveModel]
+    deny_labels: [Account, AccountRecord, Query, Job, DataProduct]
+    deny_columns: [product.list_price_usd, pg.product.list_price_usd, part.unit_cost_usd, pg.part.unit_cost_usd,
+                   part_supplier.unit_cost_usd, pg.part_supplier.unit_cost_usd, technician.hire_date, pg.technician.hire_date]
+    documents: [runbook, glossary]
+    max_neighborhood: 25
+  analyst:
+    description: Data analyst; every warehouse and lake table and the metadata layer, no contact PII.
+    tables: ["*"]
+    deny_tables: [contact, pg.contact]
+    labels: ["*"]
+    deny_labels: []
+    deny_columns: [site.address, pg.site.address]
+    documents: [glossary]
+    max_neighborhood: 50

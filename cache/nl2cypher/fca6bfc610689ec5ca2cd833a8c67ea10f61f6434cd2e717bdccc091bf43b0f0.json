@@ -1,0 +1,7 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "created": "2026-10-17T09:00:54.957579+00:00",
+  "messages_sha256": "fca6bfc610689ec5ca2cd833a8c67ea10f61f6434cd2e717bdccc091bf43b0f0",
+  "response": "```cypher\nMATCH (p:Product {product_id: 'PRD-SA300'})\nMATCH (r:Runbook)\nWHERE r.product_family = p.family\nRETURN count(DISTINCT r) AS runbook_count\n```"
+}

@@ -1,0 +1,7 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "created": "2026-10-17T09:00:51.078343+00:00",
+  "messages_sha256": "99643eee309aeb9df372f4efeb671a400afc2175862bba494e0c2fa0e879ef82",
+  "response": "```cypher\nMATCH (c:Column)-[:MEANS]->(t:Term {label: 'Failure (telemetry)'})\nRETURN c.column_key AS column_key\nORDER BY column_key\n```"
+}

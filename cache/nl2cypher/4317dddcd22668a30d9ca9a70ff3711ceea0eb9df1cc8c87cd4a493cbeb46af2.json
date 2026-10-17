@@ -1,0 +1,7 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "created": "2026-10-17T09:00:31.503296+00:00",
+  "messages_sha256": "4317dddcd22668a30d9ca9a70ff3711ceea0eb9df1cc8c87cd4a493cbeb46af2",
+  "response": "```cypher\nMATCH (c:Case)\nWHERE c.failure_reported = 1\nRETURN count(c) AS service_failures\n```"
+}

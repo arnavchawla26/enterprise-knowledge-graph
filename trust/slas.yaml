@@ -1,0 +1,75 @@
+# Data-trust SLAs per data product, evaluated by `uv run python -m ekg.trust run`.
+# Three checks per data product:
+#   completeness  row counts and null rates of required columns, in the lake (CSV/Parquet via DuckDB)
+#                 and in the warehouse (Postgres); warehouse_vs_lake compares the two copies.
+#   freshness     hours between the newest event timestamp in the product's tables and the clock
+#                 (--as-of, default now). Data ends 2026-06-30, so against a real clock every
+#                 product is stale; the README reports both clocks.
+#   schema_drift  columns added, removed or retyped versus trust/schema_baseline.json
+#                 (`ekg.trust baseline` writes it from the live schema).
+# Thresholds are declared here, never inferred from the data.
+data_products:
+  fleet_health:
+    owner: services_ops_ds
+    freshness_sla_hours: 24
+    freshness_columns:
+      drive_summary: last_seen      # an event stream; install_date is not (it is historical by design)
+    tables:
+      drive_summary:
+        min_rows: 350000
+        max_null_rate: {serial_number: 0.0, model: 0.0, vault_id: 0.0, failed: 0.0, last_seen: 0.0}
+      drive_model:
+        min_rows: 50
+        max_null_rate: {model: 0.0, vendor: 0.0}
+      installed_asset:
+        min_rows: 350000
+        max_null_rate: {asset_id: 0.0, serial_number: 0.0, site_id: 0.0, product_id: 0.0, warranty_end: 0.12}
+      site:
+        min_rows: 500
+        max_null_rate: {site_id: 0.0, account_id: 0.0, region: 0.0}
+    warehouse_vs_lake: {max_row_count_gap: 0.01}
+  parts_demand:
+    owner: supply_chain_analytics
+    freshness_sla_hours: 168
+    freshness_columns:
+      dispatch: scheduled_at
+    tables:
+      dispatch:
+        min_rows: 3000
+        max_null_rate: {dispatch_id: 0.0, case_id: 0.0, technician_id: 0.0, scheduled_at: 0.0, outcome: 0.0, parts_used: 0.60}
+      dispatch_part:
+        min_rows: 2000
+        max_null_rate: {dispatch_id: 0.0, part_id: 0.0, quantity: 0.0}
+      part:
+        min_rows: 30
+        max_null_rate: {part_id: 0.0, part_number: 0.0, unit_cost_usd: 0.0}
+      inventory:
+        min_rows: 150
+        max_null_rate: {depot_id: 0.0, part_id: 0.0, on_hand: 0.0}
+      site:
+        min_rows: 500
+        max_null_rate: {site_id: 0.0, region: 0.0}
+    warehouse_vs_lake: {max_row_count_gap: 0.01}
+  dispatch_quality:
+    owner: services_ops_ds
+    freshness_sla_hours: 24
+    freshness_columns:
+      case: opened_at
+      dispatch: scheduled_at
+    tables:
+      dispatch:
+        min_rows: 3000
+        max_null_rate: {dispatch_id: 0.0, case_id: 0.0, visit_number: 0.0, outcome: 0.0}
+      case:
+        min_rows: 7000
+        max_null_rate: {case_id: 0.0, opened_at: 0.0, asset_id: 0.0, category: 0.0, severity: 0.0, closed_at: 0.10}
+      installed_asset:
+        min_rows: 350000
+        max_null_rate: {asset_id: 0.0, product_id: 0.0}
+      product:
+        min_rows: 10
+        max_null_rate: {product_id: 0.0, family: 0.0}
+      site:
+        min_rows: 500
+        max_null_rate: {site_id: 0.0, region: 0.0}
+    warehouse_vs_lake: {max_row_count_gap: 0.01}

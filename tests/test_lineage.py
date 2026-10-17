@@ -33,6 +33,10 @@ def test_build_links_columns_jobs_products_queries_and_terms():
     planned = [j for j in rows["jobs"] if j["job_id"] == "JOB-002"]
     assert planned and planned[0]["status"] == "real" and planned[0]["source"] == "declared"
     assert any(c["column_key"] == "installed_asset.serial_number" for c in rows["columns"])
+    assert {"src": "pg.installed_asset", "dst": "installed_asset", "via": "JOB-003", "precision": "copy"} in rows["derived"]
+    assert {"src": "JOB-002", "dst": "installed_asset"} not in rows["reads"], "a job does not read its own output"
+    assert any(d["src"] == "case" and d["dst"] == "installed_asset" and d["precision"] == "declared_row" for d in rows["derived"])
+    assert any(d["src"] == "reports/fleet_risk_sites.csv" and d["dst"] == "telemetry_daily" and d["precision"] == "job" for d in rows["derived"])
 
 
 def test_columns_from_file_reads_csv_header():
@@ -48,6 +52,8 @@ def test_declared_reads_and_writes_are_named_in_each_jobs_source():
     repos = {"services-ops-intelligence": settings().sois_repo, "enterprise-knowledge-graph": Path(__file__).resolve().parents[1]}
     for j in pipe["jobs"]:
         src = (repos[j["repo"]] / j["module"]).read_text()
+        if j.get("config"):
+            src += (repos[j["repo"]] / j["config"]).read_text()
         for ds in j.get("reads", []) + j.get("writes", []):
             d = pipe["datasets"][ds]
             if d["kind"] in ("neo4j", "elasticsearch_index"):
@@ -58,11 +64,12 @@ def test_declared_reads_and_writes_are_named_in_each_jobs_source():
 
 
 def test_provenance_and_impact_formatting():
-    d = {"column": "reports/fleet_risk_sites.csv.expected_failures_30d", "table": "reports/fleet_risk_sites.csv", "means": "Fleet Health",
-         "definition": "x", "upstream": [{"depth": 1, "node": "failure_model", "type": "Job", "kind": "sois.failure_model", "source": None},
-                                         {"depth": 2, "node": "telemetry_daily", "type": "Table", "kind": "parquet", "source": "real"}]}
+    d = {"column": "reports/fleet_risk_sites.csv.expected_failures_30d", "table": "reports/fleet_risk_sites.csv", "producers": ["failure_model"],
+         "means": "Fleet Health", "definition": "x",
+         "upstream": [{"depth": 1, "node": "telemetry_daily", "kind": "parquet", "source": "real", "produced_by": ["load_telemetry"]}]}
     out = lineage.format_provenance(d)
-    assert "<- [Job] failure_model" in out and "<- [Table] telemetry_daily (parquet, real)" in out
-    i = {"table": "installed_asset", "downstream": [{"depth": 1, "node": "failure_model", "type": "Job"}], "data_products": ["fleet_health"],
-         "logged_queries": 3, "query_users": ["analyst_01"]}
-    assert "data products affected: fleet_health" in lineage.format_impact(i)
+    assert "written by failure_model" in out and "<- telemetry_daily (parquet, real, by load_telemetry)" in out
+    i = {"table": "installed_asset", "downstream": [{"depth": 1, "node": "pg.installed_asset", "kind": "postgres_table"}], "jobs": ["load_postgres"],
+         "data_products": ["fleet_health"], "logged_queries": 3, "query_users": ["analyst_01"]}
+    out = lineage.format_impact(i)
+    assert "jobs that must re-run: load_postgres" in out and "data products affected: fleet_health" in out

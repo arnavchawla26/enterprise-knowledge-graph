@@ -1,0 +1,7 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "created": "2026-10-17T08:55:47.141486+00:00",
+  "messages_sha256": "be1654e264fd728e0174360afd7c613bfadb5d51c22bcef270192005d9f67ef2",
+  "response": "```cypher\nMATCH (rb:Runbook)-[:COVERS]->(p:Product {product_id: 'PRD-SA300'})\nRETURN count(rb) AS runbook_count\n```"
+}

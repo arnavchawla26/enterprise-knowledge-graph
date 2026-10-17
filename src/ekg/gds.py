@@ -228,6 +228,7 @@ def lift(reports: Path, sois_repo: Path, parquet_dir: Path, seeds: tuple[int, ..
     if test_start <= train_end + timedelta(days=horizon):
         raise SystemExit("leaking split")
 
+    # features come from Project 1's telemetry_daily Parquet through its own build_features
     emb = pd.read_parquet(reports / "asset_embeddings.parquet")
     emb_cols = [c for c in emb.columns if c.startswith("e")]
     con = duckdb.connect()

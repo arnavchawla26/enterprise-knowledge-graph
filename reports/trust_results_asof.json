@@ -1,0 +1,1901 @@
+{
+  "run_id": "20260701T000000-asof",
+  "as_of": "2026-07-01T00:00:00+00:00",
+  "checks": 111,
+  "by_status": {
+    "pass": 97,
+    "fail": 14,
+    "skip": 0
+  },
+  "summary": {
+    "fleet_health": {
+      "status": "fail",
+      "checks": 32,
+      "failed": 4,
+      "failed_checks": [
+        "completeness.warehouse:drive_model",
+        "completeness.warehouse:drive_summary",
+        "completeness.warehouse:installed_asset",
+        "completeness.warehouse:site"
+      ],
+      "newest_event": "2026-06-30"
+    },
+    "parts_demand": {
+      "status": "fail",
+      "checks": 38,
+      "failed": 3,
+      "failed_checks": [
+        "completeness.warehouse:dispatch",
+        "completeness.warehouse:dispatch_part",
+        "completeness.warehouse:site"
+      ],
+      "newest_event": "2026-07-11T11:18:32"
+    },
+    "dispatch_quality": {
+      "status": "fail",
+      "checks": 38,
+      "failed": 4,
+      "failed_checks": [
+        "completeness.warehouse:case",
+        "completeness.warehouse:dispatch",
+        "completeness.warehouse:installed_asset",
+        "completeness.warehouse:site"
+      ],
+      "newest_event": "2026-07-11T11:18:32"
+    }
+  },
+  "docs": [
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.rows",
+      "table": "drive_summary",
+      "status": "pass",
+      "threshold": 350000,
+      "value": 359101,
+      "detail": {
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "drive_summary.serial_number",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "drive_summary.model",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "drive_summary.vault_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "drive_summary.failed",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "drive_summary.last_seen",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.warehouse",
+      "table": "drive_summary",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.99998,
+      "detail": {
+        "lake_rows": 359101,
+        "warehouse_rows": 6,
+        "gap": 0.99998
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "drive_summary",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "pg.telemetry_drive_summary",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.rows",
+      "table": "drive_model",
+      "status": "pass",
+      "threshold": 50,
+      "value": 81,
+      "detail": {
+        "rows": 81
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "drive_model.model",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 81
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "drive_model.vendor",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 81
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.warehouse",
+      "table": "drive_model",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.93827,
+      "detail": {
+        "lake_rows": 81,
+        "warehouse_rows": 5,
+        "gap": 0.93827
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "drive_model",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "pg.drive_model",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.rows",
+      "table": "installed_asset",
+      "status": "pass",
+      "threshold": 350000,
+      "value": 359101,
+      "detail": {
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "installed_asset.asset_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "installed_asset.serial_number",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "installed_asset.site_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "installed_asset.product_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "installed_asset.warranty_end",
+      "status": "pass",
+      "threshold": 0.12,
+      "value": 0.09961,
+      "detail": {
+        "null_rate": 0.09961,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.warehouse",
+      "table": "installed_asset",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.99998,
+      "detail": {
+        "lake_rows": 359101,
+        "warehouse_rows": 6,
+        "gap": 0.99998
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "installed_asset",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "pg.installed_asset",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.rows",
+      "table": "site",
+      "status": "pass",
+      "threshold": 500,
+      "value": 701,
+      "detail": {
+        "rows": 701
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "site.site_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 701
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "site.account_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 701
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "site.region",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 701
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "completeness.warehouse",
+      "table": "site",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.94437,
+      "detail": {
+        "lake_rows": 701,
+        "warehouse_rows": 39,
+        "gap": 0.94437
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "site",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "pg.site",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "freshness",
+      "table": "drive_summary.last_seen",
+      "status": "pass",
+      "threshold": 24,
+      "value": 24.0,
+      "detail": {
+        "newest": "2026-06-30",
+        "age_hours": 24.0
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "fleet_health",
+      "owner": "services_ops_ds",
+      "check": "summary",
+      "table": null,
+      "status": "fail",
+      "threshold": 0,
+      "value": 4,
+      "detail": {
+        "checks": 32,
+        "failed": 4,
+        "failed_checks": [
+          "completeness.warehouse:drive_model",
+          "completeness.warehouse:drive_summary",
+          "completeness.warehouse:installed_asset",
+          "completeness.warehouse:site"
+        ],
+        "newest_event": "2026-06-30"
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.rows",
+      "table": "dispatch",
+      "status": "pass",
+      "threshold": 3000,
+      "value": 4108,
+      "detail": {
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "dispatch.dispatch_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "dispatch.case_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "dispatch.technician_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "dispatch.scheduled_at",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "dispatch.outcome",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "dispatch.parts_used",
+      "status": "pass",
+      "threshold": 0.6,
+      "value": 0.40823,
+      "detail": {
+        "null_rate": 0.40823,
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.warehouse",
+      "table": "dispatch",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.99903,
+      "detail": {
+        "lake_rows": 4108,
+        "warehouse_rows": 4,
+        "gap": 0.99903
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "schema_drift",
+      "table": "dispatch",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "schema_drift",
+      "table": "pg.dispatch",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.rows",
+      "table": "dispatch_part",
+      "status": "pass",
+      "threshold": 2000,
+      "value": 2616,
+      "detail": {
+        "rows": 2616
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "dispatch_part.dispatch_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 2616
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "dispatch_part.part_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 2616
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "dispatch_part.quantity",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 2616
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.warehouse",
+      "table": "dispatch_part",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.99885,
+      "detail": {
+        "lake_rows": 2616,
+        "warehouse_rows": 3,
+        "gap": 0.99885
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "schema_drift",
+      "table": "dispatch_part",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "schema_drift",
+      "table": "pg.dispatch_part",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.rows",
+      "table": "part",
+      "status": "pass",
+      "threshold": 30,
+      "value": 30,
+      "detail": {
+        "rows": 30
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "part.part_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 30
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "part.part_number",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 30
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "part.unit_cost_usd",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 30
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.warehouse",
+      "table": "part",
+      "status": "pass",
+      "threshold": 0.01,
+      "value": 0.0,
+      "detail": {
+        "lake_rows": 30,
+        "warehouse_rows": 30,
+        "gap": 0.0
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "schema_drift",
+      "table": "part",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "schema_drift",
+      "table": "pg.part",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.rows",
+      "table": "inventory",
+      "status": "pass",
+      "threshold": 150,
+      "value": 180,
+      "detail": {
+        "rows": 180
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "inventory.depot_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 180
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "inventory.part_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 180
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "inventory.on_hand",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 180
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.warehouse",
+      "table": "inventory",
+      "status": "pass",
+      "threshold": 0.01,
+      "value": 0.0,
+      "detail": {
+        "lake_rows": 180,
+        "warehouse_rows": 180,
+        "gap": 0.0
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "schema_drift",
+      "table": "inventory",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "schema_drift",
+      "table": "pg.inventory",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.rows",
+      "table": "site",
+      "status": "pass",
+      "threshold": 500,
+      "value": 701,
+      "detail": {
+        "rows": 701
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "site.site_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 701
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.nulls",
+      "table": "site.region",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 701
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "completeness.warehouse",
+      "table": "site",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.94437,
+      "detail": {
+        "lake_rows": 701,
+        "warehouse_rows": 39,
+        "gap": 0.94437
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "schema_drift",
+      "table": "site",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "schema_drift",
+      "table": "pg.site",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "freshness",
+      "table": "dispatch.scheduled_at",
+      "status": "pass",
+      "threshold": 168,
+      "value": -251.3,
+      "detail": {
+        "newest": "2026-07-11T11:18:32",
+        "age_hours": -251.3
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "parts_demand",
+      "owner": "supply_chain_analytics",
+      "check": "summary",
+      "table": null,
+      "status": "fail",
+      "threshold": 0,
+      "value": 3,
+      "detail": {
+        "checks": 38,
+        "failed": 3,
+        "failed_checks": [
+          "completeness.warehouse:dispatch",
+          "completeness.warehouse:dispatch_part",
+          "completeness.warehouse:site"
+        ],
+        "newest_event": "2026-07-11T11:18:32"
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.rows",
+      "table": "dispatch",
+      "status": "pass",
+      "threshold": 3000,
+      "value": 4108,
+      "detail": {
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "dispatch.dispatch_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "dispatch.case_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "dispatch.visit_number",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "dispatch.outcome",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 4108
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.warehouse",
+      "table": "dispatch",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.99903,
+      "detail": {
+        "lake_rows": 4108,
+        "warehouse_rows": 4,
+        "gap": 0.99903
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "dispatch",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "pg.dispatch",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.rows",
+      "table": "case",
+      "status": "pass",
+      "threshold": 7000,
+      "value": 8281,
+      "detail": {
+        "rows": 8281
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "case.case_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 8281
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "case.opened_at",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 8281
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "case.asset_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 8281
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "case.category",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 8281
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "case.severity",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 8281
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "case.closed_at",
+      "status": "pass",
+      "threshold": 0.1,
+      "value": 0.0512,
+      "detail": {
+        "null_rate": 0.0512,
+        "rows": 8281
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.warehouse",
+      "table": "case",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.99891,
+      "detail": {
+        "lake_rows": 8281,
+        "warehouse_rows": 9,
+        "gap": 0.99891
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "case",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "pg.case",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.rows",
+      "table": "installed_asset",
+      "status": "pass",
+      "threshold": 350000,
+      "value": 359101,
+      "detail": {
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "installed_asset.asset_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "installed_asset.product_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 359101
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.warehouse",
+      "table": "installed_asset",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.99998,
+      "detail": {
+        "lake_rows": 359101,
+        "warehouse_rows": 6,
+        "gap": 0.99998
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "installed_asset",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "pg.installed_asset",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.rows",
+      "table": "product",
+      "status": "pass",
+      "threshold": 10,
+      "value": 10,
+      "detail": {
+        "rows": 10
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "product.product_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 10
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "product.family",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 10
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.warehouse",
+      "table": "product",
+      "status": "pass",
+      "threshold": 0.01,
+      "value": 0.0,
+      "detail": {
+        "lake_rows": 10,
+        "warehouse_rows": 10,
+        "gap": 0.0
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "product",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "pg.product",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.rows",
+      "table": "site",
+      "status": "pass",
+      "threshold": 500,
+      "value": 701,
+      "detail": {
+        "rows": 701
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "site.site_id",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 701
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.nulls",
+      "table": "site.region",
+      "status": "pass",
+      "threshold": 0.0,
+      "value": 0.0,
+      "detail": {
+        "null_rate": 0.0,
+        "rows": 701
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "completeness.warehouse",
+      "table": "site",
+      "status": "fail",
+      "threshold": 0.01,
+      "value": 0.94437,
+      "detail": {
+        "lake_rows": 701,
+        "warehouse_rows": 39,
+        "gap": 0.94437
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "site",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "schema_drift",
+      "table": "pg.site",
+      "status": "pass",
+      "threshold": 0,
+      "value": 0,
+      "detail": {
+        "added": [],
+        "removed": [],
+        "retyped": [],
+        "comparable": true
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "freshness",
+      "table": "case.opened_at",
+      "status": "pass",
+      "threshold": 24,
+      "value": -71.3,
+      "detail": {
+        "newest": "2026-07-03T23:19:53",
+        "age_hours": -71.3
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "freshness",
+      "table": "dispatch.scheduled_at",
+      "status": "pass",
+      "threshold": 24,
+      "value": -251.3,
+      "detail": {
+        "newest": "2026-07-11T11:18:32",
+        "age_hours": -251.3
+      }
+    },
+    {
+      "run_id": "20260701T000000-asof",
+      "as_of": "2026-07-01T00:00:00+00:00",
+      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "data_product": "dispatch_quality",
+      "owner": "services_ops_ds",
+      "check": "summary",
+      "table": null,
+      "status": "fail",
+      "threshold": 0,
+      "value": 4,
+      "detail": {
+        "checks": 38,
+        "failed": 4,
+        "failed_checks": [
+          "completeness.warehouse:case",
+          "completeness.warehouse:dispatch",
+          "completeness.warehouse:installed_asset",
+          "completeness.warehouse:site"
+        ],
+        "newest_event": "2026-07-11T11:18:32"
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "created": "2026-10-17T08:59:23.841371+00:00",
+  "messages_sha256": "a1c4d4eb0c728eb6ea2e9dc7c314efa469491c7ac058ef63045b0a026a18eb43",
+  "response": "```cypher\nMATCH (p:Pod)\nWHERE p.risky = true\nRETURN count(p) AS risky_pod_count\n```"
+}

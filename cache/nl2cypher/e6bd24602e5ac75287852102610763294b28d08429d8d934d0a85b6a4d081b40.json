@@ -1,0 +1,7 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "created": "2026-10-17T08:59:17.218317+00:00",
+  "messages_sha256": "e6bd24602e5ac75287852102610763294b28d08429d8d934d0a85b6a4d081b40",
+  "response": "```cypher\nMATCH (p:Part)-[r:SUPPLIED_BY]-(s:Supplier)\nWITH p, COUNT(DISTINCT s) AS supplierCount\nWHERE supplierCount = 1\nRETURN p.part_number AS part_number\nORDER BY part_number\n```"
+}

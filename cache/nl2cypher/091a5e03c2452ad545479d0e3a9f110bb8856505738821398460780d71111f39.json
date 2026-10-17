@@ -1,0 +1,7 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "created": "2026-10-17T09:00:35.369546+00:00",
+  "messages_sha256": "091a5e03c2452ad545479d0e3a9f110bb8856505738821398460780d71111f39",
+  "response": "```cypher\nMATCH (d:Dispatch)\nWHERE d.visit_number > 1\nRETURN count(d) AS repeat_dispatches\n```"
+}

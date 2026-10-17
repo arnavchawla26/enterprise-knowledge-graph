@@ -1,0 +1,607 @@
+{
+  "captured_at": "2026-10-17T08:59:29.790257+00:00",
+  "lake": {
+    "case": [
+      {
+        "name": "case_id",
+        "type": "varchar"
+      },
+      {
+        "name": "opened_at",
+        "type": "varchar"
+      },
+      {
+        "name": "closed_at",
+        "type": "varchar"
+      },
+      {
+        "name": "account_id",
+        "type": "varchar"
+      },
+      {
+        "name": "asset_id",
+        "type": "varchar"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "severity",
+        "type": "bigint"
+      },
+      {
+        "name": "description",
+        "type": "varchar"
+      },
+      {
+        "name": "resolution_code",
+        "type": "varchar"
+      },
+      {
+        "name": "resolution_text",
+        "type": "varchar"
+      },
+      {
+        "name": "failure_reported",
+        "type": "bigint"
+      },
+      {
+        "name": "source_system",
+        "type": "varchar"
+      }
+    ],
+    "dispatch": [
+      {
+        "name": "dispatch_id",
+        "type": "varchar"
+      },
+      {
+        "name": "case_id",
+        "type": "varchar"
+      },
+      {
+        "name": "technician_id",
+        "type": "varchar"
+      },
+      {
+        "name": "scheduled_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "visit_number",
+        "type": "bigint"
+      },
+      {
+        "name": "outcome",
+        "type": "varchar"
+      },
+      {
+        "name": "parts_used",
+        "type": "varchar"
+      }
+    ],
+    "dispatch_part": [
+      {
+        "name": "dispatch_id",
+        "type": "varchar"
+      },
+      {
+        "name": "part_id",
+        "type": "varchar"
+      },
+      {
+        "name": "quantity",
+        "type": "bigint"
+      }
+    ],
+    "drive_model": [
+      {
+        "name": "model",
+        "type": "varchar"
+      },
+      {
+        "name": "vendor",
+        "type": "varchar"
+      },
+      {
+        "name": "capacity_bytes",
+        "type": "bigint"
+      },
+      {
+        "name": "drive_count",
+        "type": "bigint"
+      },
+      {
+        "name": "failure_count",
+        "type": "double"
+      }
+    ],
+    "drive_summary": [
+      {
+        "name": "serial_number",
+        "type": "varchar"
+      },
+      {
+        "name": "model",
+        "type": "varchar"
+      },
+      {
+        "name": "capacity_bytes",
+        "type": "bigint"
+      },
+      {
+        "name": "datacenter",
+        "type": "varchar"
+      },
+      {
+        "name": "cluster_id",
+        "type": "varchar"
+      },
+      {
+        "name": "vault_id",
+        "type": "varchar"
+      },
+      {
+        "name": "pod_id",
+        "type": "varchar"
+      },
+      {
+        "name": "first_seen",
+        "type": "date"
+      },
+      {
+        "name": "last_seen",
+        "type": "date"
+      },
+      {
+        "name": "days_observed",
+        "type": "bigint"
+      },
+      {
+        "name": "failed",
+        "type": "integer"
+      },
+      {
+        "name": "failure_date",
+        "type": "date"
+      },
+      {
+        "name": "max_power_on_hours",
+        "type": "bigint"
+      }
+    ],
+    "installed_asset": [
+      {
+        "name": "asset_id",
+        "type": "varchar"
+      },
+      {
+        "name": "serial_number",
+        "type": "varchar"
+      },
+      {
+        "name": "site_id",
+        "type": "varchar"
+      },
+      {
+        "name": "product_id",
+        "type": "varchar"
+      },
+      {
+        "name": "install_date",
+        "type": "date"
+      },
+      {
+        "name": "warranty_end",
+        "type": "date"
+      },
+      {
+        "name": "status",
+        "type": "varchar"
+      },
+      {
+        "name": "order_id",
+        "type": "varchar"
+      }
+    ],
+    "inventory": [
+      {
+        "name": "depot_id",
+        "type": "varchar"
+      },
+      {
+        "name": "part_id",
+        "type": "varchar"
+      },
+      {
+        "name": "on_hand",
+        "type": "bigint"
+      },
+      {
+        "name": "reorder_point",
+        "type": "bigint"
+      }
+    ],
+    "part": [
+      {
+        "name": "part_id",
+        "type": "varchar"
+      },
+      {
+        "name": "part_number",
+        "type": "varchar"
+      },
+      {
+        "name": "description",
+        "type": "varchar"
+      },
+      {
+        "name": "category",
+        "type": "varchar"
+      },
+      {
+        "name": "unit_cost_usd",
+        "type": "bigint"
+      }
+    ],
+    "product": [
+      {
+        "name": "product_id",
+        "type": "varchar"
+      },
+      {
+        "name": "product_name",
+        "type": "varchar"
+      },
+      {
+        "name": "family",
+        "type": "varchar"
+      },
+      {
+        "name": "drive_bays",
+        "type": "bigint"
+      },
+      {
+        "name": "list_price_usd",
+        "type": "bigint"
+      },
+      {
+        "name": "capacity_class",
+        "type": "varchar"
+      }
+    ],
+    "site": [
+      {
+        "name": "site_id",
+        "type": "varchar"
+      },
+      {
+        "name": "account_id",
+        "type": "varchar"
+      },
+      {
+        "name": "site_name",
+        "type": "varchar"
+      },
+      {
+        "name": "address",
+        "type": "varchar"
+      },
+      {
+        "name": "city",
+        "type": "varchar"
+      },
+      {
+        "name": "state",
+        "type": "varchar"
+      },
+      {
+        "name": "region",
+        "type": "varchar"
+      }
+    ]
+  },
+  "warehouse": {
+    "case": [
+      {
+        "name": "case_id",
+        "type": "character varying"
+      },
+      {
+        "name": "opened_at",
+        "type": "character varying"
+      },
+      {
+        "name": "closed_at",
+        "type": "character varying"
+      },
+      {
+        "name": "account_id",
+        "type": "character varying"
+      },
+      {
+        "name": "asset_id",
+        "type": "character varying"
+      },
+      {
+        "name": "category",
+        "type": "character varying"
+      },
+      {
+        "name": "severity",
+        "type": "integer"
+      },
+      {
+        "name": "description",
+        "type": "character varying"
+      },
+      {
+        "name": "resolution_code",
+        "type": "character varying"
+      },
+      {
+        "name": "resolution_text",
+        "type": "character varying"
+      },
+      {
+        "name": "failure_reported",
+        "type": "integer"
+      },
+      {
+        "name": "source_system",
+        "type": "character varying"
+      }
+    ],
+    "dispatch": [
+      {
+        "name": "dispatch_id",
+        "type": "character varying"
+      },
+      {
+        "name": "case_id",
+        "type": "character varying"
+      },
+      {
+        "name": "technician_id",
+        "type": "character varying"
+      },
+      {
+        "name": "scheduled_at",
+        "type": "timestamp without time zone"
+      },
+      {
+        "name": "visit_number",
+        "type": "integer"
+      },
+      {
+        "name": "outcome",
+        "type": "character varying"
+      },
+      {
+        "name": "parts_used",
+        "type": "character varying"
+      }
+    ],
+    "dispatch_part": [
+      {
+        "name": "dispatch_id",
+        "type": "character varying"
+      },
+      {
+        "name": "part_id",
+        "type": "character varying"
+      },
+      {
+        "name": "quantity",
+        "type": "integer"
+      }
+    ],
+    "drive_model": [
+      {
+        "name": "model",
+        "type": "character varying"
+      },
+      {
+        "name": "vendor",
+        "type": "character varying"
+      },
+      {
+        "name": "capacity_bytes",
+        "type": "bigint"
+      },
+      {
+        "name": "drive_count",
+        "type": "bigint"
+      },
+      {
+        "name": "failure_count",
+        "type": "bigint"
+      }
+    ],
+    "drive_summary": [
+      {
+        "name": "serial_number",
+        "type": "character varying"
+      },
+      {
+        "name": "model",
+        "type": "character varying"
+      },
+      {
+        "name": "capacity_bytes",
+        "type": "bigint"
+      },
+      {
+        "name": "datacenter",
+        "type": "character varying"
+      },
+      {
+        "name": "cluster_id",
+        "type": "character varying"
+      },
+      {
+        "name": "vault_id",
+        "type": "character varying"
+      },
+      {
+        "name": "pod_id",
+        "type": "character varying"
+      },
+      {
+        "name": "first_seen",
+        "type": "date"
+      },
+      {
+        "name": "last_seen",
+        "type": "date"
+      },
+      {
+        "name": "days_observed",
+        "type": "bigint"
+      },
+      {
+        "name": "failed",
+        "type": "integer"
+      },
+      {
+        "name": "failure_date",
+        "type": "date"
+      },
+      {
+        "name": "max_power_on_hours",
+        "type": "bigint"
+      }
+    ],
+    "installed_asset": [
+      {
+        "name": "asset_id",
+        "type": "character varying"
+      },
+      {
+        "name": "serial_number",
+        "type": "character varying"
+      },
+      {
+        "name": "site_id",
+        "type": "character varying"
+      },
+      {
+        "name": "product_id",
+        "type": "character varying"
+      },
+      {
+        "name": "install_date",
+        "type": "date"
+      },
+      {
+        "name": "warranty_end",
+        "type": "date"
+      },
+      {
+        "name": "status",
+        "type": "character varying"
+      },
+      {
+        "name": "order_id",
+        "type": "character varying"
+      }
+    ],
+    "inventory": [
+      {
+        "name": "depot_id",
+        "type": "character varying"
+      },
+      {
+        "name": "part_id",
+        "type": "character varying"
+      },
+      {
+        "name": "on_hand",
+        "type": "integer"
+      },
+      {
+        "name": "reorder_point",
+        "type": "integer"
+      }
+    ],
+    "part": [
+      {
+        "name": "part_id",
+        "type": "character varying"
+      },
+      {
+        "name": "part_number",
+        "type": "character varying"
+      },
+      {
+        "name": "description",
+        "type": "character varying"
+      },
+      {
+        "name": "category",
+        "type": "character varying"
+      },
+      {
+        "name": "unit_cost_usd",
+        "type": "double precision"
+      }
+    ],
+    "product": [
+      {
+        "name": "product_id",
+        "type": "character varying"
+      },
+      {
+        "name": "product_name",
+        "type": "character varying"
+      },
+      {
+        "name": "family",
+        "type": "character varying"
+      },
+      {
+        "name": "drive_bays",
+        "type": "integer"
+      },
+      {
+        "name": "list_price_usd",
+        "type": "double precision"
+      },
+      {
+        "name": "capacity_class",
+        "type": "character varying"
+      }
+    ],
+    "site": [
+      {
+        "name": "site_id",
+        "type": "character varying"
+      },
+      {
+        "name": "account_id",
+        "type": "character varying"
+      },
+      {
+        "name": "site_name",
+        "type": "character varying"
+      },
+      {
+        "name": "address",
+        "type": "character varying"
+      },
+      {
+        "name": "city",
+        "type": "character varying"
+      },
+      {
+        "name": "state",
+        "type": "character varying"
+      },
+      {
+        "name": "region",
+        "type": "character varying"
+      }
+    ]
+  }
+}

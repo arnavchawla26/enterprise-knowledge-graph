@@ -1,0 +1,7 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "created": "2026-10-17T09:00:37.989862+00:00",
+  "messages_sha256": "a55ac31da84229ff6378f6aaaad2f1671b4e2a928b2119a04030946d693c7129",
+  "response": "```cypher\nMATCH (p:Part)-[:SUPPLIED_BY]->(s:Supplier)\nWITH p, count(DISTINCT s) AS supplier_count\nWHERE supplier_count = 1\nRETURN p.part_number AS part_number\nORDER BY part_number\n```"
+}

@@ -70,6 +70,10 @@ datasets:
   ekg/reports/gds_lift.json:           {kind: report, path: reports/gds_lift.json, repo: enterprise-knowledge-graph}
   ekg/es/ekg-trust:                    {kind: elasticsearch_index, path: "http://localhost:9200/ekg-trust", repo: enterprise-knowledge-graph}
 
+# Names the generated lineage.csv uses for lake datasets that this file names differently
+aliases:
+  telemetry_drive_summary: drive_summary
+
 # Postgres copies: one `pg.<name>` dataset per table in sql/schema.sql; columns come from information_schema at load time.
 warehouse_tables: [drive_model, telemetry_drive_summary, telemetry_daily_recent, account, site, contact, product, order, installed_asset,
                    order_line, part, supplier, part_supplier, inventory, technician, runbook, case, dispatch, dispatch_part,
@@ -170,6 +174,7 @@ jobs:
     entrypoint: ekg.trust
     repo: enterprise-knowledge-graph
     module: src/ekg/trust.py
+    config: trust/slas.yaml      # the tables it reads are declared there, not in the module
     schedule: on demand (make trust)
     reads: [installed_asset, site, drive_summary, drive_model, dispatch, dispatch_part, part, inventory, case, product]
     writes: [ekg/es/ekg-trust]

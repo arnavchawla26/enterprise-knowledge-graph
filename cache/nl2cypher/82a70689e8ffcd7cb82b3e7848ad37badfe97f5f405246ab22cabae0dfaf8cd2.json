@@ -1,0 +1,7 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "created": "2026-10-17T08:58:31.800920+00:00",
+  "messages_sha256": "82a70689e8ffcd7cb82b3e7848ad37badfe97f5f405246ab22cabae0dfaf8cd2",
+  "response": "```cypher\nMATCH (c:Case)\nRETURN c.category AS category, count(*) AS count\nORDER BY count DESC, category ASC\n```"
+}

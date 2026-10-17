@@ -1,0 +1,7 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "created": "2026-10-17T08:54:09.069271+00:00",
+  "messages_sha256": "534361da4a1749130dd9b68eb833c1305ec3043d309ca976c7822ac3ca8052a8",
+  "response": "```cypher\nMATCH (c:Case)\nWHERE c.failure_reported = 1\nRETURN count(c) AS service_failure_count\n```"
+}

@@ -1,0 +1,7 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "created": "2026-10-17T09:00:33.061965+00:00",
+  "messages_sha256": "70a427a4bc9c4fa4b3b59e180f825c6d01265ce36527fdb5e38d8af81f4a72ef",
+  "response": "```cypher\nMATCH (c:Case)\nRETURN c.category AS category, count(*) AS count\nORDER BY count DESC, category\n```"
+}

@@ -1,0 +1,7 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "created": "2026-10-17T08:53:55.402274+00:00",
+  "messages_sha256": "2b9ceae8b38599a0637140a5615c97302d7b1ceddbe0ac3aaabf66d07fa3d095",
+  "response": "```cypher\nMATCH (p:Pod)\nWHERE p.risky = true\nRETURN count(p) AS risky_pods\n```"
+}

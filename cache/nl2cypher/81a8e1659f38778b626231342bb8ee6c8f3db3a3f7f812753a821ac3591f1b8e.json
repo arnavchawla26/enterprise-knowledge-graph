@@ -1,0 +1,7 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "created": "2026-10-17T09:00:09.360408+00:00",
+  "messages_sha256": "81a8e1659f38778b626231342bb8ee6c8f3db3a3f7f812753a821ac3591f1b8e",
+  "response": "```cypher\nMATCH (c:Column)-[:MEANS]->(t:Term {label: 'Failure (telemetry)'})\nRETURN DISTINCT c.column_key AS column_key\n```"
+}

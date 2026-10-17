@@ -1,0 +1,7 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "created": "2026-10-17T08:55:27.249467+00:00",
+  "messages_sha256": "1397b58c17c934c5a4b461b346f9d72f268de00368d2ef25a04eae11687ae98d",
+  "response": "```cypher\nMATCH (dp:DataProduct)-[:COMPOSED_OF]->(t:Table {name: 'pg.site'})\nRETURN dp.name AS name\n```"
+}

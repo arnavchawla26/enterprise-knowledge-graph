@@ -75,7 +75,7 @@ def neo4j_driver(read_only: bool = False):
 
     s = settings()
     auth = (s.neo4j_reader_user, s.neo4j_reader_password) if read_only else (s.neo4j_user, s.neo4j_password)
-    return GraphDatabase.driver(s.neo4j_uri, auth=auth)
+    return GraphDatabase.driver(s.neo4j_uri, auth=auth, notifications_min_severity="OFF")
 
 
 def pg_connect():

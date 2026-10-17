@@ -114,14 +114,16 @@ account ACC-00009", a technician gets parts and assets but not accounts, prices 
 account's neighbourhood; the ops lead gets all of it. No model call; keyword matching only.
 
 ### Data trust ([docs/TRUST.md](docs/TRUST.md), `reports/trust_dashboard.png`)
-111 checks per run against `trust/slas.yaml`. Against the real clock: 93 pass, 18 fail; as of
-2026-07-01: 97 pass, 14 fail. The warehouse-vs-lake completeness checks fail on every table
-because Project 1's Postgres on this machine holds its 6-row test fixture while the lake
-holds 359,101 assets; the job reports it and nothing here modifies that database.
-Freshness fails against today because the quarter ended 2026-06-30, and passes as of
-2026-07-01 for telemetry and support. Schema drift is 0 because the baseline was captured
-from the same files; the test shows it firing. The Kibana dashboard is a committed
-saved-objects export and a headless screenshot.
+111 checks per run against `trust/slas.yaml`, lake (Project 1's files) and warehouse
+(Project 1's Postgres). Against the real clock: 104 pass, 7 fail, all freshness: the
+quarter ended 2026-06-30, so the telemetry is 2,625 h old against a 24 h SLA and the
+support tables are a few months behind theirs. As of 2026-07-01: 111 pass, 0 fail.
+Completeness (row counts, null rates, warehouse-vs-lake row gaps) passes on every table;
+schema drift is 0 because the baseline was captured from the same files, and the test shows
+it firing. One earlier run is worth a line: before Project 1's Postgres was reloaded it held
+that repository's 6-row test fixture, and the same job reported 18 failures, every
+warehouse-vs-lake check among them. That is what the check is for. The Kibana dashboard is
+a committed saved-objects export and a headless screenshot.
 
 ![trust dashboard](reports/trust_dashboard.png)
 
@@ -156,8 +158,8 @@ make screenshot                          # import the Kibana dashboard and captu
 make api                                 # context API on :8008
 ```
 
-`ekg.load --postgres` reads the drive summary from Project 1's Postgres instead of Parquet;
-on this machine that database holds a 6-row fixture, which is why Parquet is the default.
+`ekg.load --postgres` reads the drive summary from Project 1's Postgres instead of Parquet
+(same 359,101 rows, checked; Parquet stays the default because it needs no database).
 `make eval-live` calls the model backends for uncached prompts (`NVIDIA_API_KEY`,
 `ANTHROPIC_API_KEY`). The Kibana screenshot needs `uv run playwright install chromium` once.
 
@@ -182,7 +184,7 @@ tests/        60 tests on hand-made fixtures (6 assets, 8 account rows, every me
 
 Commit dates are real; nothing is backdated. Every number in this README was printed by
 code in this repository on the stated date and lives in `reports/`. Negative results
-(the embedding lift, the stale warehouse, the stale freshness) are reported as measured.
+(the embedding lift, the stale freshness, the stale-warehouse run) are reported as measured.
 The generated data is labelled generated everywhere it appears. Project 1's repository and
 database were never modified.
 

@@ -3,44 +3,30 @@
   "as_of": "2026-07-01T00:00:00+00:00",
   "checks": 111,
   "by_status": {
-    "pass": 97,
-    "fail": 14,
+    "pass": 111,
+    "fail": 0,
     "skip": 0
   },
   "summary": {
     "fleet_health": {
-      "status": "fail",
+      "status": "pass",
       "checks": 32,
-      "failed": 4,
-      "failed_checks": [
-        "completeness.warehouse:drive_model",
-        "completeness.warehouse:drive_summary",
-        "completeness.warehouse:installed_asset",
-        "completeness.warehouse:site"
-      ],
+      "failed": 0,
+      "failed_checks": [],
       "newest_event": "2026-06-30"
     },
     "parts_demand": {
-      "status": "fail",
+      "status": "pass",
       "checks": 38,
-      "failed": 3,
-      "failed_checks": [
-        "completeness.warehouse:dispatch",
-        "completeness.warehouse:dispatch_part",
-        "completeness.warehouse:site"
-      ],
+      "failed": 0,
+      "failed_checks": [],
       "newest_event": "2026-07-11T11:18:32"
     },
     "dispatch_quality": {
-      "status": "fail",
+      "status": "pass",
       "checks": 38,
-      "failed": 4,
-      "failed_checks": [
-        "completeness.warehouse:case",
-        "completeness.warehouse:dispatch",
-        "completeness.warehouse:installed_asset",
-        "completeness.warehouse:site"
-      ],
+      "failed": 0,
+      "failed_checks": [],
       "newest_event": "2026-07-11T11:18:32"
     }
   },
@@ -48,7 +34,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.rows",
@@ -63,7 +49,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -79,7 +65,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -95,7 +81,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -111,7 +97,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -127,7 +113,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -143,24 +129,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.warehouse",
       "table": "drive_summary",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.99998,
+      "value": 0.0,
       "detail": {
         "lake_rows": 359101,
-        "warehouse_rows": 6,
-        "gap": 0.99998
+        "warehouse_rows": 359101,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -178,7 +164,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -196,7 +182,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.rows",
@@ -211,7 +197,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -227,7 +213,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -243,24 +229,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.warehouse",
       "table": "drive_model",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.93827,
+      "value": 0.0,
       "detail": {
         "lake_rows": 81,
-        "warehouse_rows": 5,
-        "gap": 0.93827
+        "warehouse_rows": 81,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -278,7 +264,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -296,7 +282,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.rows",
@@ -311,7 +297,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -327,7 +313,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -343,7 +329,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -359,7 +345,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -375,7 +361,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -391,24 +377,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.warehouse",
       "table": "installed_asset",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.99998,
+      "value": 0.0,
       "detail": {
         "lake_rows": 359101,
-        "warehouse_rows": 6,
-        "gap": 0.99998
+        "warehouse_rows": 359101,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -426,7 +412,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -444,7 +430,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.rows",
@@ -459,7 +445,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -475,7 +461,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -491,7 +477,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -507,24 +493,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "completeness.warehouse",
       "table": "site",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.94437,
+      "value": 0.0,
       "detail": {
         "lake_rows": 701,
-        "warehouse_rows": 39,
-        "gap": 0.94437
+        "warehouse_rows": 701,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -542,7 +528,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -560,7 +546,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "freshness",
@@ -576,30 +562,25 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "fleet_health",
       "owner": "services_ops_ds",
       "check": "summary",
       "table": null,
-      "status": "fail",
+      "status": "pass",
       "threshold": 0,
-      "value": 4,
+      "value": 0,
       "detail": {
         "checks": 32,
-        "failed": 4,
-        "failed_checks": [
-          "completeness.warehouse:drive_model",
-          "completeness.warehouse:drive_summary",
-          "completeness.warehouse:installed_asset",
-          "completeness.warehouse:site"
-        ],
+        "failed": 0,
+        "failed_checks": [],
         "newest_event": "2026-06-30"
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.rows",
@@ -614,7 +595,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -630,7 +611,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -646,7 +627,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -662,7 +643,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -678,7 +659,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -694,7 +675,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -710,24 +691,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.warehouse",
       "table": "dispatch",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.99903,
+      "value": 0.0,
       "detail": {
         "lake_rows": 4108,
-        "warehouse_rows": 4,
-        "gap": 0.99903
+        "warehouse_rows": 4108,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "schema_drift",
@@ -745,7 +726,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "schema_drift",
@@ -763,7 +744,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.rows",
@@ -778,7 +759,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -794,7 +775,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -810,7 +791,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -826,24 +807,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.warehouse",
       "table": "dispatch_part",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.99885,
+      "value": 0.0,
       "detail": {
         "lake_rows": 2616,
-        "warehouse_rows": 3,
-        "gap": 0.99885
+        "warehouse_rows": 2616,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "schema_drift",
@@ -861,7 +842,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "schema_drift",
@@ -879,7 +860,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.rows",
@@ -894,7 +875,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -910,7 +891,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -926,7 +907,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -942,7 +923,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.warehouse",
@@ -959,7 +940,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "schema_drift",
@@ -977,7 +958,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "schema_drift",
@@ -995,7 +976,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.rows",
@@ -1010,7 +991,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -1026,7 +1007,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -1042,7 +1023,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -1058,7 +1039,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.warehouse",
@@ -1075,7 +1056,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "schema_drift",
@@ -1093,7 +1074,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "schema_drift",
@@ -1111,7 +1092,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.rows",
@@ -1126,7 +1107,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -1142,7 +1123,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.nulls",
@@ -1158,24 +1139,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "completeness.warehouse",
       "table": "site",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.94437,
+      "value": 0.0,
       "detail": {
         "lake_rows": 701,
-        "warehouse_rows": 39,
-        "gap": 0.94437
+        "warehouse_rows": 701,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "schema_drift",
@@ -1193,7 +1174,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "schema_drift",
@@ -1211,7 +1192,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "freshness",
@@ -1227,29 +1208,25 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "parts_demand",
       "owner": "supply_chain_analytics",
       "check": "summary",
       "table": null,
-      "status": "fail",
+      "status": "pass",
       "threshold": 0,
-      "value": 3,
+      "value": 0,
       "detail": {
         "checks": 38,
-        "failed": 3,
-        "failed_checks": [
-          "completeness.warehouse:dispatch",
-          "completeness.warehouse:dispatch_part",
-          "completeness.warehouse:site"
-        ],
+        "failed": 0,
+        "failed_checks": [],
         "newest_event": "2026-07-11T11:18:32"
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.rows",
@@ -1264,7 +1241,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1280,7 +1257,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1296,7 +1273,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1312,7 +1289,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1328,24 +1305,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.warehouse",
       "table": "dispatch",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.99903,
+      "value": 0.0,
       "detail": {
         "lake_rows": 4108,
-        "warehouse_rows": 4,
-        "gap": 0.99903
+        "warehouse_rows": 4108,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -1363,7 +1340,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -1381,7 +1358,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.rows",
@@ -1396,7 +1373,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1412,7 +1389,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1428,7 +1405,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1444,7 +1421,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1460,7 +1437,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1476,7 +1453,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1492,24 +1469,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.warehouse",
       "table": "case",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.99891,
+      "value": 0.0,
       "detail": {
         "lake_rows": 8281,
-        "warehouse_rows": 9,
-        "gap": 0.99891
+        "warehouse_rows": 8281,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -1527,7 +1504,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -1545,7 +1522,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.rows",
@@ -1560,7 +1537,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1576,7 +1553,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1592,24 +1569,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.warehouse",
       "table": "installed_asset",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.99998,
+      "value": 0.0,
       "detail": {
         "lake_rows": 359101,
-        "warehouse_rows": 6,
-        "gap": 0.99998
+        "warehouse_rows": 359101,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -1627,7 +1604,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -1645,7 +1622,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.rows",
@@ -1660,7 +1637,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1676,7 +1653,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1692,7 +1669,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.warehouse",
@@ -1709,7 +1686,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -1727,7 +1704,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -1745,7 +1722,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.rows",
@@ -1760,7 +1737,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1776,7 +1753,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.nulls",
@@ -1792,24 +1769,24 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "completeness.warehouse",
       "table": "site",
-      "status": "fail",
+      "status": "pass",
       "threshold": 0.01,
-      "value": 0.94437,
+      "value": 0.0,
       "detail": {
         "lake_rows": 701,
-        "warehouse_rows": 39,
-        "gap": 0.94437
+        "warehouse_rows": 701,
+        "gap": 0.0
       }
     },
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -1827,7 +1804,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "schema_drift",
@@ -1845,7 +1822,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "freshness",
@@ -1861,7 +1838,7 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "freshness",
@@ -1877,23 +1854,18 @@
     {
       "run_id": "20260701T000000-asof",
       "as_of": "2026-07-01T00:00:00+00:00",
-      "evaluated_at": "2026-10-17T08:59:48.103860+00:00",
+      "evaluated_at": "2026-10-17T09:11:47.015441+00:00",
       "data_product": "dispatch_quality",
       "owner": "services_ops_ds",
       "check": "summary",
       "table": null,
-      "status": "fail",
+      "status": "pass",
       "threshold": 0,
-      "value": 4,
+      "value": 0,
       "detail": {
         "checks": 38,
-        "failed": 4,
-        "failed_checks": [
-          "completeness.warehouse:case",
-          "completeness.warehouse:dispatch",
-          "completeness.warehouse:installed_asset",
-          "completeness.warehouse:site"
-        ],
+        "failed": 0,
+        "failed_checks": [],
         "newest_event": "2026-07-11T11:18:32"
       }
     }

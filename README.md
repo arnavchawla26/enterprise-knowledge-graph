@@ -139,13 +139,25 @@ a committed saved-objects export and a headless screenshot.
 
 ![trust dashboard](reports/trust_dashboard.png)
 
-## What this does not yet support
+## Scope
 
-Words a reader might expect that this repository does not earn: a learned entity matcher (the
-shipped one is scored rules, measured on generated mess); any lift from graph features
-(measured negative); enterprise role enforcement in Neo4j (Community edition); and a real
-query history (300 generated rows). The ontology is governed by a test, not by a review
-process.
+Every item of the Project 2 design (brainstorm sections 11, 12 and 13c), as done or cut.
+Nothing is deferred: what is not here is not planned here.
+
+| Design item | Status | Where |
+|---|---|---|
+| Ontology: one definition per term, relationships between terms, SKOS/OWL file loaded into the graph | Done: 25 terms (the 18 of 13c plus Account Record, Column, Data Product, Job, Query, Table, Drive), 18 relationships | `ontology/enterprise.ttl`, `ontology/glossary.md`, `:Term` nodes |
+| Ontology governance | Done as a test, cut as a process: `ekg.ontology check` blocks the load on a term with zero or two definitions; there is no review board because there is one author | `src/ekg/ontology.py`, `tests/test_ontology.py` |
+| Entity resolution with match confidence on the edge and a reviewable uncertain list | Done: scored rules, pairwise precision/recall on a held-out split, 24 uncertain pairs, `SAME_AS` edges with score, method, band | [docs/RESOLUTION.md](docs/RESOLUTION.md), `reports/uncertain_matches.csv` |
+| A learned matcher | Cut: the mess is produced by five written rules, so a model would learn the generator, not resolution; the scored rules already invert the rules at 1.000, which is the ceiling the data allows | [docs/RESOLUTION.md](docs/RESOLUTION.md) |
+| Lineage graph: Table, Column, DataProduct, Job; "where did this number come from" and "what breaks if this table changes" | Done at table and column level: column paths to the raw CSV, column-level impact; limits listed | [docs/LINEAGE.md](docs/LINEAGE.md) |
+| Query history in the graph | Done with generated history: 300 `Query` nodes from Project 1's generator, used by impact. Cut: a real history, because no real user has queried this warehouse | [docs/LINEAGE.md](docs/LINEAGE.md) |
+| GDS: communities of assets that fail together, centrality for critical parts, embeddings as features with the measured lift | Done: Louvain/WCC co-failure communities, part betweenness, FastRP embeddings, lift measured and negative (PR-AUC -0.018) | [docs/GDS.md](docs/GDS.md), `reports/gds_*.json` |
+| Time-aware co-failure embedding | Cut: edges only among failures before date t leave the embedding null for the 358,000 drives that have not failed, so it cannot rank the fleet; the reason is in the doc | [docs/GDS.md](docs/GDS.md) |
+| Text-to-Cypher with a self-correcting loop | Done: two backends, write guard, READ access mode, disk cache; a 20-question set and a 10-question multi-hop set with frozen result hashes | [docs/NL2CYPHER.md](docs/NL2CYPHER.md), `questions/` |
+| Context-assembly API: tables, columns, documents and graph neighbourhood the caller may see | Done: `POST /context` with per-role allow-lists, denied-items list, audit log; documents are the runbooks | [docs/API.md](docs/API.md), `policy/roles.yaml` |
+| Role enforcement inside Neo4j | Cut: Neo4j Community has users but no roles, so the reader account is hygiene; enforcement is the guard, the READ access mode and the API's allow-lists | [docs/NL2CYPHER.md](docs/NL2CYPHER.md) |
+| Data-trust dashboard in Kibana: completeness, freshness, schema drift per data product against SLAs | Done: 111 checks per run, both clocks, saved objects and a headless screenshot | [docs/TRUST.md](docs/TRUST.md), `reports/trust_dashboard.png` |
 
 ## How to run
 

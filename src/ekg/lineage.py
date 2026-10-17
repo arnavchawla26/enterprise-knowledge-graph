@@ -3,6 +3,7 @@
     uv run python -m ekg.lineage load                      # build the metadata layer in Neo4j
     uv run python -m ekg.lineage provenance reports/fleet_risk_sites.csv expected_failures_30d
     uv run python -m ekg.lineage impact installed_asset
+    uv run python -m ekg.lineage impact telemetry_daily smart_5_raw    # a column: downstream columns and jobs
 
 Sources: lineage/pipeline.yaml (the real Project 1 and Project 2 pipeline,
 declared by hand and checked against the source by tests), the generated
@@ -13,9 +14,17 @@ a column means.
 
 Two questions the graph answers, with Cypher in docs/LINEAGE.md:
   provenance  "where did this number come from": from a Column, walk
-              Table-PRODUCED_BY->Job-READS->Table upstream to the raw files.
+              Column-DERIVED_FROM->Column upstream to the raw CSV columns
+              (the column path), and Table-DERIVED_FROM->Table with the job
+              that produced each dataset (the job path).
   impact      "what breaks if this table changes": the downstream closure of
               jobs, tables, data products and logged queries.
+
+Column edges come from `column_lineage` in pipeline.yaml (declared per job
+from its code: the aggregation or join behind each output column) and from
+the Postgres copy job, generated for every column name a pg.* table shares
+with its lake source. Each edge carries via (job), precision (copy, cast,
+expr) and expr (the declared expression).
 """
 
 from __future__ import annotations
@@ -82,6 +91,9 @@ def build(pipeline: dict, generated: dict[str, pd.DataFrame], lake_columns: dict
         tables[f"pg.{t}"] = {"name": f"pg.{t}", "kind": "postgres_table", "path": f"postgres://{sois_repo}/public.{t}", "source": "warehouse_copy",
                              "repo": sois_repo, "pii": t == "contact", "store": "warehouse", "gitignored": False, "note": None}
     columns: list[dict] = []
+    for name, d in pipeline["datasets"].items():
+        for i, c in enumerate(d.get("columns") or []):      # declared (in-memory frames that DESCRIBE cannot see)
+            columns.append({"column_key": f"{name}.{c}", "table": name, "name": c, "data_type": "declared", "ordinal": i + 1})
     for name, cols in lake_columns.items():
         for c in cols:
             columns.append({"column_key": f"{name}.{c['name']}", "table": name, **c})
@@ -91,24 +103,27 @@ def build(pipeline: dict, generated: dict[str, pd.DataFrame], lake_columns: dict
     for t in tables.values():
         t["columns"] = sum(1 for c in columns if c["table"] == t["name"])
 
+    wh_sources = pipeline.get("warehouse_sources", {})
     jobs: dict[str, dict] = {}
     reads: list[dict] = []
     produced: list[dict] = []
     derived: list[dict] = []     # Table-DERIVED_FROM->Table: precise where the job is a copy, coarse (every write from every read) otherwise
+    copy_job: str | None = None
     for j in pipeline["jobs"]:
         jobs[j["job_id"]] = {"job_id": j["job_id"], "name": j["name"], "entrypoint": j["entrypoint"], "repo": j["repo"],
                              "module": j.get("module"), "schedule": j.get("schedule"), "status": "real", "source": "declared"}
         reads += [{"src": j["job_id"], "dst": t} for t in j.get("reads", [])]
         writes = list(j.get("writes", []))
+        inter = list(j.get("intermediates", []))   # produced by the job, derived from its reads, and every write derives from them
         if j.get("writes_warehouse"):
+            copy_job = j["job_id"]
             writes += [f"pg.{t}" for t in pipeline["warehouse_tables"]]
-            derived += [{"src": f"pg.{t}", "dst": t, "via": j["job_id"], "precision": "copy"} for t in pipeline["warehouse_tables"] if t in j.get("reads", [])]
-            derived += [{"src": "pg.telemetry_drive_summary", "dst": "drive_summary", "via": j["job_id"], "precision": "copy"},
-                        {"src": "pg.telemetry_daily_recent", "dst": "telemetry_daily", "via": j["job_id"], "precision": "copy"},
-                        {"src": "pg.drive_model", "dst": "drive_model", "via": j["job_id"], "precision": "copy"}]
+            derived += [{"src": f"pg.{t}", "dst": wh_sources.get(t, t), "via": j["job_id"], "precision": "copy"}
+                        for t in pipeline["warehouse_tables"] if wh_sources.get(t, t) in j.get("reads", [])]
         else:
-            derived += [{"src": w, "dst": r, "via": j["job_id"], "precision": "job"} for w in writes for r in j.get("reads", [])]
-        produced += [{"src": t, "dst": j["job_id"]} for t in writes]
+            derived += [{"src": w, "dst": r, "via": j["job_id"], "precision": "job"} for w in writes + inter for r in j.get("reads", [])]
+            derived += [{"src": w, "dst": i, "via": j["job_id"], "precision": "job"} for w in writes for i in inter]
+        produced += [{"src": t, "dst": j["job_id"]} for t in writes + inter]
     # generated job.csv / lineage.csv: keep the rows the declared pipeline does not already cover, marked generated
     gj = generated.get("job")
     if gj is not None:
@@ -166,8 +181,53 @@ def build(pipeline: dict, generated: dict[str, pd.DataFrame], lake_columns: dict
     stored: list[dict] = [{"src": term, "dst": t} for term, ts in pipeline["term_tables"].items() for t in ts if t in tables]
     stored += [{"src": term, "dst": f"pg.{t}"} for term, ts in pipeline["term_tables"].items() for t in ts if f"pg.{t}" in tables]
     derived = [d for d in derived if d["src"] in tables and d["dst"] in tables and d["src"] != d["dst"]]
+    col_derived, unresolved = column_edges(pipeline, columns, copy_job)
     return {"tables": list(tables.values()), "columns": columns, "jobs": list(jobs.values()), "reads": reads, "produced": produced,
-            "derived": derived, "data_products": dps, "composed": composed, "queries": queries, "query_reads": qreads, "means": means, "stored": stored}
+            "derived": derived, "data_products": dps, "composed": composed, "queries": queries, "query_reads": qreads, "means": means, "stored": stored,
+            "column_derived": col_derived, "column_unresolved": unresolved}
+
+
+def column_edges(pipeline: dict, columns: list[dict], copy_job: str | None) -> tuple[list[dict], list[str]]:
+    """Column-DERIVED_FROM->Column rows from `column_lineage` plus the generated Postgres copies.
+    Returns the edges whose two ends exist and the list of declared references that do not."""
+    by_table: dict[str, set[str]] = {}
+    for c in columns:
+        by_table.setdefault(c["table"], set()).add(c["name"])
+    groups = pipeline.get("column_groups", {})
+    edges: list[dict] = []
+    unresolved: list[str] = []
+    seen: set[tuple[str, str]] = set()
+
+    def add(src: str, dst: str, via: str, precision: str, expr: str | None) -> None:
+        if (src, dst) in seen or src == dst:
+            return
+        for key in (src, dst):
+            t, c = key.rsplit(".", 1)
+            if c not in by_table.get(t, set()):
+                unresolved.append(key)
+                return
+        seen.add((src, dst))
+        edges.append({"src": src, "dst": dst, "via": via, "precision": precision, "expr": expr})
+
+    if copy_job:
+        wh_sources = pipeline.get("warehouse_sources", {})
+        for t in pipeline["warehouse_tables"]:
+            src_table = wh_sources.get(t, t)
+            for c in sorted(by_table.get(f"pg.{t}", set()) & by_table.get(src_table, set())):
+                add(f"pg.{t}.{c}", f"{src_table}.{c}", copy_job, "copy", None)
+    for block in pipeline.get("column_lineage", []):
+        target, source, job = block["target"], block["source"], block["job"]
+        if block.get("copy"):
+            for c in sorted(by_table.get(target, set()) & by_table.get(source, set())):
+                add(f"{target}.{c}", f"{source}.{c}", job, block.get("precision", "copy"), None)
+        for col, spec in (block.get("columns") or {}).items():
+            froms: list[str] = []
+            for f in spec.get("from", []):
+                froms += groups[f[1:]] if f.startswith("$") else [f]
+            for f in froms:
+                src = f if "." in f and f.rsplit(".", 1)[0] in by_table else f"{source}.{f}"
+                add(f"{target}.{col}", src, job, "expr", spec.get("expr"))
+    return edges, sorted(set(unresolved))
 
 
 METADATA_EDGES = ("BELONGS_TO", "READS", "PRODUCED_BY", "DERIVED_FROM", "COMPOSED_OF", "MEANS", "STORED_IN")
@@ -189,7 +249,9 @@ def write(session, rows: dict[str, list[dict]], log=print) -> dict[str, int]:
                                         [{"src": x["column_key"], "dst": x["table"]} for x in rows["columns"]])
     c["READS(job)"] = graph.write_edges(session, "Job", "job_id", "READS", "Table", "name", rows["reads"])
     c["PRODUCED_BY"] = graph.write_edges(session, "Table", "name", "PRODUCED_BY", "Job", "job_id", rows["produced"])
-    c["DERIVED_FROM"] = graph.write_edges(session, "Table", "name", "DERIVED_FROM", "Table", "name", rows["derived"], props=("via", "precision"))
+    c["DERIVED_FROM(table)"] = graph.write_edges(session, "Table", "name", "DERIVED_FROM", "Table", "name", rows["derived"], props=("via", "precision"))
+    c["DERIVED_FROM(column)"] = graph.write_edges(session, "Column", "column_key", "DERIVED_FROM", "Column", "column_key",
+                                                  rows["column_derived"], props=("via", "precision", "expr"))
     c["COMPOSED_OF"] = graph.write_edges(session, "DataProduct", "data_product_id", "COMPOSED_OF", "Table", "name", rows["composed"])
     c["READS(query)"] = graph.write_edges(session, "Query", "query_id", "READS", "Table", "name", rows["query_reads"])
     c["MEANS"] = graph.write_edges(session, "Column", "column_key", "MEANS", "Term", "term_id", rows["means"])
@@ -217,6 +279,32 @@ WITH c, t, term, producers, up, depth, collect(DISTINCT uj.name) AS via
 RETURN c.column_key AS column, t.name AS table, producers, term.label AS means, term.definition AS definition,
        [x IN collect({depth: depth, node: up.name, kind: up.kind, source: up.source, produced_by: via}) WHERE x.node IS NOT NULL] AS upstream
 """
+COLUMN_PROVENANCE = """
+// The column path: every column upstream of this one through Column-DERIVED_FROM->Column, at its
+// shortest depth, with the job and expression of the last hop on that shortest path.
+MATCH (c:Column {column_key: $column_key})
+MATCH p = (c)-[:DERIVED_FROM*1..12]->(up:Column)
+WITH up, p ORDER BY length(p)
+WITH up, head(collect(p)) AS p
+WITH up, length(p) AS depth, relationships(p)[-1] AS last, nodes(p)[-2] AS parent
+MATCH (up)-[:BELONGS_TO]->(t:Table)
+OPTIONAL MATCH (j:Job {job_id: last.via})
+RETURN up.column_key AS column, t.name AS table, t.source AS source, depth, parent.column_key AS parent,
+       j.name AS via, last.precision AS precision, last.expr AS expr
+ORDER BY depth, column
+"""
+COLUMN_IMPACT = """
+// What breaks if this column changes: every column downstream through Column-DERIVED_FROM->Column at its
+// shortest depth, the tables they belong to, and the jobs that produce those tables.
+MATCH (c:Column {column_key: $column_key})
+OPTIONAL MATCH p = (c)<-[:DERIVED_FROM*1..12]-(d:Column)
+WITH c, d, min(length(p)) AS depth
+OPTIONAL MATCH (d)-[:BELONGS_TO]->(t:Table)
+WITH c, [x IN collect({depth: depth, column: d.column_key, table: t.name, kind: t.kind}) WHERE x.column IS NOT NULL] AS downstream
+WITH c, downstream, [x IN downstream | x.table] AS tables
+OPTIONAL MATCH (t:Table)-[:PRODUCED_BY]->(j:Job) WHERE t.name IN tables
+RETURN c.column_key AS column, downstream, collect(DISTINCT j.name) AS jobs
+"""
 IMPACT = """
 // What breaks if this table changes: downstream tables through DERIVED_FROM, the jobs that read any of
 // them (they must re-run), the data products built on them, and the logged queries that touch them.
@@ -241,6 +329,7 @@ def provenance(session, column_key: str) -> dict | None:
         return None
     d = dict(rec)
     d["upstream"] = sorted(d["upstream"], key=lambda u: (u["depth"], u["node"]))
+    d["columns"] = session.run(COLUMN_PROVENANCE, column_key=column_key).data()
     return d
 
 
@@ -255,13 +344,53 @@ def impact(session, table: str) -> dict | None:
     return d
 
 
-def format_provenance(d: dict) -> str:
+def column_impact(session, column_key: str) -> dict | None:
+    rec = session.run(COLUMN_IMPACT, column_key=column_key).single()
+    if rec is None:
+        return None
+    d = dict(rec)
+    d["downstream"] = sorted(d["downstream"], key=lambda u: (u["depth"], u["column"]))
+    d["jobs"] = sorted(j for j in d["jobs"] if j)
+    d["tables"] = sorted({u["table"] for u in d["downstream"]})
+    return d
+
+
+def format_provenance(d: dict, max_per_depth: int = 12) -> str:
     lines = [f"{d['column']}  (table {d['table']}, written by {', '.join(d['producers']) or 'unknown'})"]
     if d.get("means"):
         lines.append(f"  means: {d['means']}: {d['definition']}")
+    cols = d.get("columns") or []
+    if cols:
+        depths = sorted({c["depth"] for c in cols})
+        raw = [c for c in cols if c["depth"] == depths[-1]]
+        lines.append(f"  column path ({len(cols)} upstream columns, {len(depths)} hops; the deepest {len(raw)} are in "
+                     f"{', '.join(sorted({c['table'] for c in raw}))}):")
+        for depth in depths:
+            at = [c for c in cols if c["depth"] == depth]
+            for c in at[:max_per_depth]:
+                how = f"  [{c['via'] or '?'}: {c['expr'] or c['precision']}]"
+                lines.append(f"  {'  ' * depth}<- {c['column']}{how}")
+            if len(at) > max_per_depth:
+                lines.append(f"  {'  ' * depth}   ... and {len(at) - max_per_depth} more at this depth")
+    else:
+        lines.append("  column path: none declared (see docs/LINEAGE.md for what column lineage does not cover)")
+    lines.append("  job path:")
     for u in d["upstream"]:
         via = f", by {', '.join(u['produced_by'])}" if u.get("produced_by") else ""
         lines.append(f"  {'  ' * (u['depth'] - 1)}<- {u['node']} ({u['kind']}{', ' + u['source'] if u.get('source') else ''}{via})")
+    return "\n".join(lines)
+
+
+def format_column_impact(d: dict, max_per_depth: int = 12) -> str:
+    lines = [f"{d['column']}: {len(d['downstream'])} downstream columns in {len(d['tables'])} tables"]
+    depths = sorted({u["depth"] for u in d["downstream"]})
+    for depth in depths:
+        at = [u for u in d["downstream"] if u["depth"] == depth]
+        for u in at[:max_per_depth]:
+            lines.append(f"  {'  ' * (depth - 1)}-> {u['column']} ({u['kind']})")
+        if len(at) > max_per_depth:
+            lines.append(f"  {'  ' * (depth - 1)}   ... and {len(at) - max_per_depth} more at this depth")
+    lines.append(f"  jobs that must re-run: {', '.join(d['jobs']) or 'none'}")
     return "\n".join(lines)
 
 
@@ -292,6 +421,9 @@ def main(argv: list[str] | None = None) -> int:
         for name, d in pipe["datasets"].items():
             if d["kind"] in ("csv", "parquet", "report", "model_output") and d.get("path") and not d.get("repo"):
                 lake_cols[name] = columns_from_file(s.sois_repo / d["path"])
+            elif d["kind"] == "raw_csv" and d.get("path"):
+                first = sorted((s.sois_repo / d["path"]).rglob("*.csv"))[:1]   # one daily file is the schema (the zip unpacks one level down)
+                lake_cols[name] = columns_from_file(first[0]) if first else []
             elif d.get("repo") == "enterprise-knowledge-graph" and d["kind"] in ("report", "model_output"):
                 lake_cols[name] = columns_from_file(Path(d["path"]))
         wh_cols: dict[str, list[dict]] = {}
@@ -302,8 +434,11 @@ def main(argv: list[str] | None = None) -> int:
             except Exception as e:  # noqa: BLE001
                 print(f"postgres not available ({type(e).__name__}); warehouse columns skipped", file=sys.stderr)
         rows = build(pipe, generated, lake_cols, wh_cols, "services-ops-intelligence")
+        if rows["column_unresolved"]:
+            print(f"column lineage: {len(rows['column_unresolved'])} declared columns not found: {', '.join(rows['column_unresolved'])}", file=sys.stderr)
         with neo4j_driver() as drv, drv.session() as session:
             counts = write(session, rows)
+        counts["column_unresolved"] = len(rows["column_unresolved"])
         a.report.parent.mkdir(parents=True, exist_ok=True)
         a.report.write_text(json.dumps(counts, indent=2) + "\n")
         return 0
@@ -313,8 +448,13 @@ def main(argv: list[str] | None = None) -> int:
             d = provenance(session, key)
             print(format_provenance(d) if d else f"no column {key}")
         else:
-            d = impact(session, a.args[0])
-            print(format_impact(d) if d else f"no table {a.args[0]}")
+            key = ".".join(a.args) if len(a.args) == 2 else a.args[0]
+            d = impact(session, key)
+            if d:
+                print(format_impact(d))
+            else:
+                dc = column_impact(session, key)
+                print(format_column_impact(dc) if dc else f"no table or column {key}")
     return 0
 
 

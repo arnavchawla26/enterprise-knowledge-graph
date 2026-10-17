@@ -48,9 +48,10 @@ That is why resolution can be measured, and also why its numbers are a ceiling.
 Loaded by `make load` in about 50 s: 359,101 Asset and 359,101 Drive nodes, 6,199 Pod,
 312 Vault, 81 DriveModel, 701 Site, 335 AccountRecord (239 Account after resolution),
 8,281 Case, 4,108 Dispatch, 80 Technician, 30 Part, 8 Supplier, 10 Product, 22 Runbook,
-25 Term, and the metadata layer: 80 Table, 542 Column, 12 Job, 3 DataProduct, 300 Query.
-Every entity node has an `INSTANCE_OF` edge to its Term; every column that carries a
-glossary meaning has a `MEANS` edge to it. Daily telemetry stays out of the graph.
+25 Term, and the metadata layer: 81 Table, 777 Column, 12 Job, 3 DataProduct, 300 Query,
+with 306 table-level and 590 column-level `DERIVED_FROM` edges. Every entity node has an
+`INSTANCE_OF` edge to its Term; every column that carries a glossary meaning has a `MEANS`
+edge to it. Daily telemetry stays out of the graph.
 
 ## Measured results (2026-10-17)
 
@@ -77,11 +78,16 @@ What they do not: anything about a real CRM, where variants cross regions and ty
 the first word.
 
 ### Lineage ([docs/LINEAGE.md](docs/LINEAGE.md))
-Two questions answered with Cypher and shown with their outputs: where
-`reports/fleet_risk_sites.csv.expected_failures_30d` comes from (the Fleet Health term, written
-by `sois.failure_model` from real telemetry through the serial map), and what breaks if
-`installed_asset` changes (37 downstream datasets, 10 jobs, all 3 data products, 182 of the
-300 logged queries). Job-level lineage over-approximates: column-level lineage is not done.
+Two questions answered with Cypher and shown with their outputs. Where
+`reports/fleet_risk_sites.csv.expected_failures_30d` comes from: the column path (66 upstream
+columns in 5 hops: a per-site sum of the calibrated LightGBM score, from 25 SMART-derived
+features plus the model, from the telemetry Parquet columns, from the raw Backblaze CSV columns)
+and the job path (the Fleet Health term, written by `sois.failure_model` through the serial map).
+What breaks if `installed_asset` changes: 35 downstream datasets, 10 jobs, all 3 data products,
+182 of the 300 logged queries. Column lineage is declared per job from its code (590 edges:
+214 generated Postgres copies, 53 raw-CSV casts, 323 declared expressions) and tested against
+Project 1's feature list; it stops at JSON reports, figures, the model file and the embedding
+columns, and the expressions are declared text, not parsed SQL. The doc lists each limit.
 
 ### Graph data science ([docs/GDS.md](docs/GDS.md))
 Co-failure communities (same site, within 14 days): 233 Louvain communities over 1,306 of
@@ -167,7 +173,7 @@ make api                                 # context API on :8008
 
 ```
 ontology/     enterprise.ttl (SKOS/OWL-lite), glossary.md (rendered)
-lineage/      pipeline.yaml (the real pipeline, declared and tested)
+lineage/      pipeline.yaml (the real pipeline and its column lineage, declared and tested)
 policy/       roles.yaml (per-role allow-lists for the API)
 questions/    eval.yaml (20 questions, gold Cypher, frozen result hashes)
 trust/        slas.yaml, schema_baseline.json

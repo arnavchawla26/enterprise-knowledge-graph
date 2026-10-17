@@ -53,6 +53,21 @@ datasets:
   models/test_scores.parquet:         {kind: model_output, path: models/test_scores.parquet, gitignored: true}
   models/failure_model_bundle.pkl:    {kind: model, path: models/failure_model_bundle.pkl, gitignored: true}
   models/lightgbm.txt:                {kind: model, path: models/lightgbm.txt, gitignored: true}
+  # failure_model's in-memory feature frame (sois.failure_model.build_features + add_labels + predict_raw + score_fleet):
+  # one row per drive per prediction date, never written to disk. Declared so column lineage can pass through it.
+  failure_model/features:
+    kind: dataframe
+    path: build_features
+    source: real_derived
+    store: memory
+    note: "in-memory frame inside sois.failure_model; never written; columns declared here and checked against the module by a test"
+    columns: [date, serial_number, model, capacity_bytes, datacenter, vault_id,
+              smart_5_raw, smart_5_normalized, smart_187_raw, smart_187_normalized, smart_188_raw, smart_188_normalized,
+              smart_197_raw, smart_197_normalized, smart_198_raw, smart_198_normalized,
+              smart_9_raw, smart_194_raw, smart_199_raw, smart_241_raw, smart_242_raw,
+              smart_5_delta7, smart_5_max7, smart_187_delta7, smart_187_max7, smart_197_delta7, smart_197_max7, smart_198_delta7, smart_198_max7,
+              days_seen_7, t, y, censored, heuristic, heuristic_flag, logistic, lightgbm, p_fail_30d]
+  # parts_forecast's in-memory weekly demand grid is written as reports/parts_weekly_demand.csv, so it needs no memory dataset.
   reports/parts_forecast_backtest.csv: {kind: report, path: reports/parts_forecast_backtest.csv}
   reports/parts_forecast_detail.csv:   {kind: report, path: reports/parts_forecast_detail.csv}
   reports/parts_forecast_summary.json: {kind: report, path: reports/parts_forecast_summary.json}
@@ -75,6 +90,8 @@ aliases:
   telemetry_drive_summary: drive_summary
 
 # Postgres copies: one `pg.<name>` dataset per table in sql/schema.sql; columns come from information_schema at load time.
+# load_postgres copies each from the lake dataset of the same name except the three telemetry tables named here.
+warehouse_sources: {telemetry_drive_summary: drive_summary, telemetry_daily_recent: telemetry_daily, drive_model: drive_model}
 warehouse_tables: [drive_model, telemetry_drive_summary, telemetry_daily_recent, account, site, contact, product, order, installed_asset,
                    order_line, part, supplier, part_supplier, inventory, technician, runbook, case, dispatch, dispatch_part,
                    data_product, job, lineage, query_log]
@@ -114,6 +131,7 @@ jobs:
     module: src/sois/failure_model.py
     schedule: on demand (make models)
     reads: [telemetry_daily, drive_summary, drive_model, installed_asset, site, truth/asset_serial_map, truth/account_resolution]
+    intermediates: [failure_model/features]     # produced by the job, derived from its reads, feeds its writes; never on disk
     writes: [reports/failure_model_metrics.json, reports/dispatch_budget.csv, reports/dispatch_budget_curve.csv, reports/dispatch_budget.png,
              reports/reliability.csv, reports/fleet_risk_top100.csv, reports/fleet_risk_sites.csv, reports/fleet_risk_vaults.csv,
              models/test_scores.parquet, models/failure_model_bundle.pkl, models/lightgbm.txt]
@@ -216,3 +234,252 @@ term_tables:
   DataProduct: [data_product]
   Job: [job]
   Query: [query_log]
+
+# ---------------------------------------------------------------------------
+# Column-level lineage (Column-DERIVED_FROM->Column), declared from reading the
+# code of each job. Rules for a block:
+#   target/source  dataset names from `datasets` (or a pg.* copy)
+#   copy: true     every column name the two share is a 1:1 copy (precision `copy`,
+#                  or the block's `precision`, e.g. `cast` for TRY_CAST)
+#   columns        target column -> {from: [...], expr: "..."}; a bare name in
+#                  `from` is a column of `source`, `dataset.column` is any column,
+#                  `$group` expands to a list from `column_groups`
+# The Postgres copy job is generated in code from `warehouse_tables` and
+# `warehouse_sources`, not declared here. tests/test_lineage.py checks that
+# numeric_features equals sois.failure_model.feature_columns() and that every
+# declared column exists.
+column_groups:
+  numeric_features: [smart_5_raw, smart_5_normalized, smart_187_raw, smart_187_normalized, smart_188_raw, smart_188_normalized,
+                     smart_197_raw, smart_197_normalized, smart_198_raw, smart_198_normalized,
+                     smart_9_raw, smart_194_raw, smart_199_raw, smart_241_raw, smart_242_raw, capacity_bytes,
+                     smart_5_delta7, smart_5_max7, smart_187_delta7, smart_187_max7, smart_197_delta7, smart_197_max7,
+                     smart_198_delta7, smart_198_max7, days_seen_7]
+  bb_five_raw: [smart_5_raw, smart_187_raw, smart_188_raw, smart_197_raw, smart_198_raw]
+  scores: [heuristic, logistic, lightgbm]
+
+column_lineage:
+  # ---- load_telemetry (sois.load_telemetry): raw CSV -> telemetry_daily (TRY_CAST per kept column), then two GROUP BYs
+  - job: JOB-001
+    target: telemetry_daily
+    source: backblaze_daily_csv
+    copy: true
+    precision: cast
+    note: "telemetry_daily.day is the hive partition taken from the CSV file name, not a column"
+  - job: JOB-001
+    target: drive_summary
+    source: telemetry_daily
+    columns:
+      serial_number:      {from: [serial_number], expr: "GROUP BY serial_number"}
+      model:              {from: [model, date], expr: "arg_max(model, date)"}
+      capacity_bytes:     {from: [capacity_bytes], expr: "max(capacity_bytes)"}
+      datacenter:         {from: [datacenter, date], expr: "arg_max(datacenter, date)"}
+      cluster_id:         {from: [cluster_id, date], expr: "arg_max(cluster_id, date)"}
+      vault_id:           {from: [vault_id, date], expr: "arg_max(vault_id, date)"}
+      pod_id:             {from: [pod_id, date], expr: "arg_max(pod_id, date)"}
+      first_seen:         {from: [date], expr: "min(date)"}
+      last_seen:          {from: [date], expr: "max(date)"}
+      days_observed:      {from: [serial_number], expr: "count(*) GROUP BY serial_number"}
+      failed:             {from: [failure], expr: "max(failure)"}
+      failure_date:       {from: [failure, date], expr: "max(CASE WHEN failure = 1 THEN date END)"}
+      max_power_on_hours: {from: [smart_9_raw], expr: "max(smart_9_raw)"}
+  - job: JOB-001
+    target: drive_model
+    source: drive_summary
+    columns:
+      model:          {from: [model], expr: "GROUP BY model"}
+      vendor:         {from: [model], expr: "vendor_from_model(model): regex on the model string"}
+      capacity_bytes: {from: [capacity_bytes], expr: "max(capacity_bytes)"}
+      drive_count:    {from: [serial_number], expr: "count(*) GROUP BY model"}
+      failure_count:  {from: [failed], expr: "sum(failed)"}
+
+  # ---- failure_model (sois.failure_model): build_features at prediction date t, add_labels, predict_raw, score_fleet
+  - job: JOB-005
+    target: failure_model/features
+    source: telemetry_daily
+    columns:
+      date:           {from: [date], expr: "rows with date = t"}
+      t:              {from: [date], expr: "the prediction date t"}
+      serial_number:  {from: [serial_number]}
+      model:          {from: [model], expr: "value at t; LightGBM categorical"}
+      capacity_bytes: {from: [capacity_bytes], expr: "value at t"}
+      datacenter:     {from: [datacenter], expr: "value at t"}
+      vault_id:       {from: [vault_id], expr: "value at t"}
+      smart_5_raw:          {from: [smart_5_raw], expr: "value at t"}
+      smart_5_normalized:   {from: [smart_5_normalized], expr: "value at t"}
+      smart_187_raw:        {from: [smart_187_raw], expr: "value at t"}
+      smart_187_normalized: {from: [smart_187_normalized], expr: "value at t"}
+      smart_188_raw:        {from: [smart_188_raw], expr: "value at t"}
+      smart_188_normalized: {from: [smart_188_normalized], expr: "value at t"}
+      smart_197_raw:        {from: [smart_197_raw], expr: "value at t"}
+      smart_197_normalized: {from: [smart_197_normalized], expr: "value at t"}
+      smart_198_raw:        {from: [smart_198_raw], expr: "value at t"}
+      smart_198_normalized: {from: [smart_198_normalized], expr: "value at t"}
+      smart_9_raw:    {from: [smart_9_raw], expr: "value at t"}
+      smart_194_raw:  {from: [smart_194_raw], expr: "value at t"}
+      smart_199_raw:  {from: [smart_199_raw], expr: "value at t"}
+      smart_241_raw:  {from: [smart_241_raw], expr: "value at t"}
+      smart_242_raw:  {from: [smart_242_raw], expr: "value at t"}
+      smart_5_delta7:   {from: [smart_5_raw, date], expr: "smart_5_raw at t minus smart_5_raw at t-7 (null if no t-7 row)"}
+      smart_5_max7:     {from: [smart_5_raw, date], expr: "max(smart_5_raw) over days t-7..t"}
+      smart_187_delta7: {from: [smart_187_raw, date], expr: "smart_187_raw at t minus at t-7"}
+      smart_187_max7:   {from: [smart_187_raw, date], expr: "max(smart_187_raw) over t-7..t"}
+      smart_197_delta7: {from: [smart_197_raw, date], expr: "smart_197_raw at t minus at t-7"}
+      smart_197_max7:   {from: [smart_197_raw, date], expr: "max(smart_197_raw) over t-7..t"}
+      smart_198_delta7: {from: [smart_198_raw, date], expr: "smart_198_raw at t minus at t-7"}
+      smart_198_max7:   {from: [smart_198_raw, date], expr: "max(smart_198_raw) over t-7..t"}
+      days_seen_7:      {from: [serial_number, date], expr: "count(*) of rows in t-7..t per serial_number"}
+      y:        {from: [drive_summary.failure_date, date], expr: "1 if failure_date in (t, t+30]"}
+      censored: {from: [drive_summary.last_seen, drive_summary.failure_date, date], expr: "y = 0 and last_seen < t+30"}
+  - job: JOB-005
+    target: failure_model/features
+    source: failure_model/features
+    columns:
+      heuristic:      {from: [$bb_five_raw], expr: "count of the five with raw > 0, plus a seeded jitter in (0, 0.5)"}
+      heuristic_flag: {from: [heuristic], expr: "heuristic >= 1"}
+      logistic:       {from: [$numeric_features, model], expr: "Platt-calibrated logistic regression on log1p raw counters, signed-log deltas, missing indicators, model one-hot"}
+      lightgbm:       {from: [$numeric_features, model], expr: "Platt-calibrated LightGBM (params in reports/failure_model_metrics.json); per-feature share is a model property (gain), not lineage"}
+      p_fail_30d:     {from: [lightgbm], expr: "the calibrated lightgbm score at the fleet scoring date (score_fleet)"}
+  - job: JOB-005
+    target: models/test_scores.parquet
+    source: failure_model/features
+    copy: true
+  - job: JOB-005
+    target: reports/fleet_risk_top100.csv
+    source: failure_model/features
+    copy: true
+    columns:
+      asset_id:         {from: [serial_number, truth/asset_serial_map.telemetry_serial, truth/asset_serial_map.asset_id], expr: "left join serial_number = telemetry_serial"}
+      telemetry_serial: {from: [truth/asset_serial_map.telemetry_serial]}
+      site_id:          {from: [truth/asset_serial_map.asset_id, installed_asset.asset_id, installed_asset.site_id], expr: "left join on asset_id"}
+      product_id:       {from: [installed_asset.product_id], expr: "left join on asset_id"}
+      warranty_end:     {from: [installed_asset.warranty_end], expr: "left join on asset_id"}
+      site_name:        {from: [installed_asset.site_id, site.site_id, site.site_name], expr: "left join on site_id"}
+      city:             {from: [site.city], expr: "left join on site_id"}
+      region:           {from: [site.region], expr: "left join on site_id"}
+      account_name:     {from: [site.account_id, truth/account_resolution.account_id, truth/account_resolution.canonical_account_id, truth/account_resolution.variant_type, truth/account_resolution.account_name],
+                         expr: "site.account_id -> canonical_account_id -> the canonical row's account_name"}
+  - job: JOB-005
+    target: reports/fleet_risk_sites.csv
+    source: failure_model/features
+    columns:
+      site_id:      {from: [serial_number, truth/asset_serial_map.telemetry_serial, truth/asset_serial_map.asset_id, installed_asset.asset_id, installed_asset.site_id], expr: "GROUP BY site after the serial -> asset -> site joins"}
+      site_name:    {from: [installed_asset.site_id, site.site_id, site.site_name], expr: "GROUP BY"}
+      city:         {from: [site.city], expr: "GROUP BY"}
+      region:       {from: [site.region], expr: "GROUP BY"}
+      account_name: {from: [site.account_id, truth/account_resolution.account_id, truth/account_resolution.canonical_account_id, truth/account_resolution.variant_type, truth/account_resolution.account_name], expr: "GROUP BY"}
+      drives:                {from: [serial_number], expr: "count(serial_number) per site"}
+      expected_failures_30d: {from: [p_fail_30d], expr: "sum(p_fail_30d) per site, rounded to 2"}
+      max_p:                 {from: [p_fail_30d], expr: "max(p_fail_30d) per site, rounded to 4"}
+      heuristic_flagged:     {from: [heuristic_flag], expr: "sum(heuristic_flag) per site"}
+  - job: JOB-005
+    target: reports/fleet_risk_vaults.csv
+    source: failure_model/features
+    columns:
+      datacenter:            {from: [datacenter], expr: "GROUP BY datacenter, vault_id"}
+      vault_id:              {from: [vault_id], expr: "GROUP BY datacenter, vault_id"}
+      drives:                {from: [serial_number], expr: "count(serial_number) per vault"}
+      expected_failures_30d: {from: [p_fail_30d], expr: "sum(p_fail_30d) per vault, rounded to 2"}
+      max_p:                 {from: [p_fail_30d], expr: "max(p_fail_30d) per vault, rounded to 4"}
+      heuristic_flagged:     {from: [heuristic_flag], expr: "sum(heuristic_flag) per vault"}
+  - job: JOB-005
+    target: reports/reliability.csv
+    source: models/test_scores.parquet
+    columns:
+      bin:            {from: [lightgbm], expr: "decile of lightgbm over test drive-days"}
+      n:              {from: [lightgbm], expr: "rows in the decile"}
+      p_min:          {from: [lightgbm], expr: "min(lightgbm) in the decile"}
+      p_max:          {from: [lightgbm], expr: "max(lightgbm) in the decile"}
+      mean_predicted: {from: [lightgbm], expr: "mean(lightgbm) in the decile"}
+      observed_rate:  {from: [y, lightgbm], expr: "mean(y) in the decile"}
+      positives:      {from: [y, lightgbm], expr: "sum(y) in the decile"}
+  - job: JOB-005
+    target: reports/dispatch_budget.csv
+    source: models/test_scores.parquet
+    columns:
+      model:             {from: [], expr: "the score column's name (heuristic, logistic, lightgbm); not a drive model"}
+      daily_budget:      {from: [], expr: "constant B from BUDGETS"}
+      days:              {from: [t], expr: "count(DISTINCT t)"}
+      trucks_total:      {from: [t, $scores], expr: "min(B, drives on day t) summed over days"}
+      caught_total:      {from: [t, y, $scores], expr: "sum of y among the top-B by score, per day"}
+      wasted_total:      {from: [t, y, $scores], expr: "trucks_total - caught_total"}
+      positives_total:   {from: [t, y], expr: "sum(y) over days"}
+      caught_per_day:    {from: [t, y, $scores], expr: "caught_total / days"}
+      wasted_per_day:    {from: [t, y, $scores], expr: "wasted_total / days"}
+      positives_per_day: {from: [t, y], expr: "positives_total / days"}
+      recall:            {from: [t, y, $scores], expr: "caught_total / positives_total"}
+      precision:         {from: [t, y, $scores], expr: "caught_total / trucks_total"}
+  - job: JOB-005
+    target: reports/dispatch_budget_curve.csv
+    source: reports/dispatch_budget.csv
+    copy: true
+    note: "same computation for B in 1..1000; declared as a copy of the budget table's columns"
+
+  # ---- parts_forecast (sois.parts_forecast): demand grid, rolling-origin detail, summary
+  - job: JOB-006
+    target: reports/parts_weekly_demand.csv
+    source: dispatch_part
+    columns:
+      week:    {from: [dispatch_part.dispatch_id, dispatch.dispatch_id, dispatch.scheduled_at], expr: "Monday of the ISO week of scheduled_at"}
+      region:  {from: [dispatch.case_id, case.case_id, case.asset_id, installed_asset.asset_id, installed_asset.site_id, site.site_id, site.region], expr: "site region through dispatch -> case -> asset -> site"}
+      part_id: {from: [part_id]}
+      demand:  {from: [quantity], expr: "sum(quantity) GROUP BY week, region, part_id; missing weeks filled with 0"}
+  - job: JOB-006
+    target: reports/parts_forecast_detail.csv
+    source: reports/parts_weekly_demand.csv
+    columns:
+      region:      {from: [region]}
+      part_id:     {from: [part_id]}
+      origin:      {from: [week], expr: "origin week o of the rolling backtest"}
+      target_week: {from: [week], expr: "o + 1 week"}
+      model:       {from: [], expr: "constant: naive, ma4, ses, lgbm"}
+      forecast:    {from: [demand, week, region, part_id], expr: "model forecast from demand up to and including o"}
+      actual:      {from: [demand, week], expr: "demand at o + 1"}
+  - job: JOB-006
+    target: reports/parts_forecast_backtest.csv
+    source: reports/parts_forecast_detail.csv
+    columns:
+      level:       {from: [], expr: "constant: region_part, by_part, by_region, fleet_total_by_part, fleet_total"}
+      model:       {from: [model]}
+      key:         {from: [part_id, region], expr: "the group key, or 'all'"}
+      n:           {from: [forecast, actual], expr: "rows in the group"}
+      mae:         {from: [forecast, actual], expr: "mean(abs(forecast - actual))"}
+      bias:        {from: [forecast, actual], expr: "mean(forecast - actual)"}
+      mean_actual: {from: [actual], expr: "mean(actual)"}
+
+  # ---- repeat_dispatch (sois.repeat_dispatch): one row per dimension value
+  - job: JOB-007
+    target: reports/repeat_dispatch.csv
+    source: dispatch
+    columns:
+      dimension:  {from: [], expr: "constant: all, product_family, case_category, region, technician, first_visit_part_supplier"}
+      key:        {from: [case_id, case.case_id, case.asset_id, case.category, installed_asset.asset_id, installed_asset.product_id, installed_asset.site_id, product.product_id, product.family, site.site_id, site.region, technician_id, technician.technician_id, technician.name, dispatch_part.dispatch_id, dispatch_part.part_id, part_supplier.part_id, part_supplier.supplier_id, part_supplier.preferred, supplier.supplier_id, supplier.name],
+                   expr: "the group value: product family, case category, site region, technician name, or preferred supplier of the part used on visit 1"}
+      dispatches:          {from: [dispatch_id], expr: "count per group"}
+      same_case_repeats:   {from: [visit_number], expr: "sum(visit_number > 1)"}
+      cross_case_repeats:  {from: [visit_number, scheduled_at, case.case_id, case.asset_id, case.closed_at], expr: "first visits whose asset had another dispatched case close within 30 days before scheduled_at"}
+      repeats:             {from: [visit_number, scheduled_at, case.case_id, case.asset_id, case.closed_at], expr: "same_case or cross_case"}
+      repeat_rate:         {from: [dispatch_id, visit_number, scheduled_at, case.asset_id, case.closed_at], expr: "repeats / dispatches"}
+      repeats_necessary:   {from: [dispatch_id, visit_number, truth/dispatch_truth.dispatch_id, truth/dispatch_truth.necessary], expr: "repeats with truth necessary = true"}
+      repeats_avoidable:   {from: [dispatch_id, visit_number, truth/dispatch_truth.dispatch_id, truth/dispatch_truth.necessary], expr: "repeats with truth necessary = false"}
+      avoidable_repeat_rate: {from: [dispatch_id, visit_number, truth/dispatch_truth.necessary], expr: "repeats_avoidable / dispatches"}
+      first_visits_unnecessary: {from: [visit_number, truth/dispatch_truth.dispatch_id, truth/dispatch_truth.necessary], expr: "visit 1 rows with truth necessary = false"}
+
+  # ---- ekg.resolve: the reviewer list is pairs of account rows with the scorer's parts
+  - job: EKG-002
+    target: ekg/reports/uncertain_matches.csv
+    source: account
+    columns:
+      row_id_a:      {from: [account_row_id]}
+      row_id_b:      {from: [account_row_id]}
+      account_id_a:  {from: [account_id]}
+      account_id_b:  {from: [account_id]}
+      name_a:        {from: [account_name]}
+      name_b:        {from: [account_name]}
+      block:         {from: [region, account_name], expr: "region + first three letters of the normalized name"}
+      jw:            {from: [account_name], expr: "Jaro-Winkler on normalized names"}
+      tokens:        {from: [account_name], expr: "token overlap on normalized names"}
+      same_industry: {from: [industry], expr: "industry_a == industry_b"}
+      same_region:   {from: [region], expr: "region_a == region_b"}
+      same_id:       {from: [account_id], expr: "account_id_a == account_id_b (reported, not scored)"}
+      score:         {from: [account_name, industry, region], expr: "0.45 jw + 0.30 tokens + 0.15 same_industry + 0.10 same_region"}
+      band:          {from: [account_name, industry, region], expr: "match / uncertain / no_match by threshold on score"}

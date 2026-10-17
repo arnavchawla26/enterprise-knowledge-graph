@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:26:15.195199+00:00",
+  "messages_sha256": "952db3494652681b116816453f3e810d772f9244a59a6adb5be456a530cfd270",
+  "response": "```cypher\nMATCH (d:Drive)\nWHERE d.failed = 1\nRETURN d.model AS model, count(d) AS failed_drives\nORDER BY failed_drives DESC, model\nLIMIT 3\n```"
+}

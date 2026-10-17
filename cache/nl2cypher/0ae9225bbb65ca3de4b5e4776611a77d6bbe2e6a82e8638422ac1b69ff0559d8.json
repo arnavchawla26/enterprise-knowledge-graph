@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:25:03.569945+00:00",
+  "messages_sha256": "0ae9225bbb65ca3de4b5e4776611a77d6bbe2e6a82e8638422ac1b69ff0559d8",
+  "response": "```cypher\nMATCH (d:Drive)\nWHERE d.failed = 1\nWITH d.model AS model, count(*) AS failed_count\nORDER BY failed_count DESC, model\nLIMIT 3\nRETURN model, failed_count\n```"
+}

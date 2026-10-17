@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:26:10.280267+00:00",
+  "messages_sha256": "d932ebef65ea2d205247da04077c41f7454ec147eefedfb3eae1ee526cf32265",
+  "response": "```cypher\nMATCH (d:Dispatch)\nWHERE d.visit_number > 1\nRETURN count(d) AS repeat_same_case_dispatches\n```"
+}

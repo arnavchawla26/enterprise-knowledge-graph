@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:26:29.223865+00:00",
+  "messages_sha256": "982d508245fb9e91dedf3d91d604df6f35b97d7acb0f94a92adf2664f487b27a",
+  "response": "```cypher\nMATCH (r:Runbook)-[:COVERS]-(p:Product {product_id: 'PRD-SA300'})\nRETURN count(DISTINCT r) AS runbook_count\n```"
+}

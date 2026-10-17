@@ -1,7 +1,0 @@
-{
-  "backend": "nim",
-  "model": "nvidia/nemotron-3-super-120b-a12b",
-  "created": "2026-10-17T08:59:50.567754+00:00",
-  "messages_sha256": "fa48290b2400226227ded66a2fe08865e70953bf7be4b00f2ff94082681257da",
-  "response": "```cypher\nMATCH (j:Job)-[:READS]->(t:Table {name: 'installed_asset'})\nRETURN DISTINCT j.name AS job_name\nORDER BY job_name\n```"
-}

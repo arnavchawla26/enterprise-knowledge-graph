@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:36:48.003030+00:00",
+  "messages_sha256": "57339c6cabc3fcf6368ac459fa10232b537ae982f3de4087a9688b7d67c1b228",
+  "response": "```cypher\nMATCH (c:Case)-[:ABOUT]->(a:Asset)\nMATCH (d:Drive)-[:SAME_AS]->(a)\nWHERE d.failure_date IS NOT NULL\n  AND d.failure_date <> ''\n  AND d.failure_date =~ '\\d{4}-\\d{2}-\\d{2}'\n  AND c.opened_at IS NOT NULL\n  AND c.opened_at <> ''\n  AND c.opened_at =~ '\\d{4}-\\d{2}-\\d{2}'\n  AND date(c.opened_at) >= date(d.failure_date)\n  AND date(c.opened_at) <= date(d.failure_date) + duration('P7D')\nRETURN count(c) AS cases_within_7_days\n```"
+}

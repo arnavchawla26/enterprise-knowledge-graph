@@ -1,7 +1,0 @@
-{
-  "backend": "claude",
-  "model": "claude-sonnet-5-5",
-  "created": "2026-10-17T09:00:26.013325+00:00",
-  "messages_sha256": "34b32fbadbff1261377650261f1f6bf15c312c44a7dc4aef99322ccfd45b699f",
-  "response": "```cypher\nMATCH (a:Asset)\nRETURN count(a) AS installed_assets\n```"
-}

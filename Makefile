@@ -32,11 +32,13 @@ lineage:         ## Table/Column/DataProduct/Job/Query layer and the two documen
 gds:             ## communities, part centrality, FastRP embeddings, and the lift test against Project 1's model
 	$(UV) run python -m ekg.gds all
 
-eval:            ## text-to-Cypher execution accuracy per backend (cached responses make reruns free)
+eval:            ## text-to-Cypher execution accuracy per backend on both question sets (cached responses make reruns free)
 	$(UV) run python -m ekg.nl2cypher eval --backend nim claude --offline
+	$(UV) run python -m ekg.nl2cypher eval --backend nim claude --offline --questions questions/hard.yaml
 
 eval-live:       ## same, allowed to call the model backends for uncached prompts
 	$(UV) run python -m ekg.nl2cypher eval --backend nim claude
+	$(UV) run python -m ekg.nl2cypher eval --backend nim claude --questions questions/hard.yaml
 
 trust:           ## completeness, freshness, schema drift -> Elasticsearch, both clocks
 	$(UV) run python -m ekg.trust run

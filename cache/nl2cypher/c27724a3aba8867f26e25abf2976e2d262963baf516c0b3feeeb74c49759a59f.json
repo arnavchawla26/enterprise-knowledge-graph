@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:25:16.352271+00:00",
+  "messages_sha256": "c27724a3aba8867f26e25abf2976e2d262963baf516c0b3feeeb74c49759a59f",
+  "response": "```cypher\nMATCH (ar:AccountRecord)-[r:SAME_AS]->(a:Account {account_id:'ACC-00009'})\nRETURN count(ar) AS record_count\n```"
+}

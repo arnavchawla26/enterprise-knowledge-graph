@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:41:59.885125+00:00",
+  "messages_sha256": "fd562845bbac2a040294e5cabe99da5a8341459054bf3bf07a391bdb986c6bcd",
+  "response": "```cypher\nMATCH (src:Table {name: 'telemetry_daily'})\nMATCH (d:Table)-[:PRODUCED_BY|READS*2..]->(src)\nWITH DISTINCT d\nMATCH (q:Query)-[:READS]->(d)\nWITH DISTINCT q\nRETURN q.user_name AS user_name, count(q"
+}

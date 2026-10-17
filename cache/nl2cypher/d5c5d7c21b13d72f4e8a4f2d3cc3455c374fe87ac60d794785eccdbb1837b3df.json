@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:26:25.643327+00:00",
+  "messages_sha256": "d5c5d7c21b13d72f4e8a4f2d3cc3455c374fe87ac60d794785eccdbb1837b3df",
+  "response": "```cypher\nMATCH (c:Column)-[:MEANS]->(t:Term {label: 'Failure (telemetry)'})\nRETURN c.column_key AS column_key\nORDER BY column_key\n```"
+}

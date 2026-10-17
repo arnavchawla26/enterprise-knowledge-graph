@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:41:49.310934+00:00",
+  "messages_sha256": "5a1f459d72aec95a2bedadfd15f330a27c4f4c4cb91bee7337ebf0a192331a51",
+  "response": "```cypher\nMATCH (t:Technician)-[:PERFORMS]->(d:Dispatch)-[:RESOLVES]->(c:Case)\nWHERE d.visit_number > 1 AND c.category = 'drive_failure'\nRETURN t.technician_id AS technician_id, count(d) AS repeat_count\nORDER BY repeat_count DESC, technician_id\nLIMIT 2\n```"
+}

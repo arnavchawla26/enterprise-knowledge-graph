@@ -1,0 +1,132 @@
+questions:
+- id: h01
+  question: Which 2 resolved accounts have the most drives with a telemetry failure among their installed assets? Return the
+    account name and the failed-drive count.
+  cypher: 'MATCH (acc:Account)-[:HAS]->(:Site)-[:HOSTS]->(:Asset)<-[:SAME_AS]-(d:Drive {failed: 1})
+
+    RETURN acc.name AS account, count(DISTINCT d) AS failed_drives ORDER BY failed_drives DESC, account LIMIT 2
+
+    '
+  expected_hash: 0394891059b302773115f4ea473916f7eb3584572319bc98ef4b8e72a3244776
+  expected_rows: 2
+  expected_preview: '[{"account": "Northwind Foods Holdings", "failed_drives": 61}, {"account": "Cedarbrook Retail Holdings",
+    "failed_drives": 45}]'
+- id: h02
+  question: For the resolved account that has the most installed assets, how many cases were opened about its installed assets
+    in May 2026?
+  cypher: 'MATCH (acc:Account)-[:HAS]->(:Site)-[:HOSTS]->(a:Asset)
+
+    WITH acc, count(a) AS assets ORDER BY assets DESC, acc.account_id LIMIT 1
+
+    MATCH (acc)-[:HAS]->(:Site)-[:HOSTS]->(:Asset)<-[:ABOUT]-(c:Case)
+
+    WHERE c.opened_at STARTS WITH ''2026-05''
+
+    RETURN count(DISTINCT c) AS cases_may_2026
+
+    '
+  expected_hash: f17cdc7a70aaafa752830fc6e31e93603b833dec6e62124c0c8c8d0323b414ab
+  expected_rows: 1
+  expected_preview: '[{"cases_may_2026": 58}]'
+- id: h03
+  question: For each product family, which part was consumed in the largest total quantity on dispatches for cases about that
+    family's assets? Return family, part_number and the total quantity.
+  cypher: 'MATCH (p:Product)<-[:IS_A]-(:Asset)<-[:ABOUT]-(:Case)<-[:RESOLVES]-(:Dispatch)-[u:USED]->(part:Part)
+
+    WITH p.family AS family, part.part_number AS part_number, sum(u.quantity) AS quantity
+
+    ORDER BY family, quantity DESC, part_number
+
+    WITH family, collect({part_number: part_number, quantity: quantity})[0] AS top
+
+    RETURN family, top.part_number AS part_number, top.quantity AS quantity ORDER BY family
+
+    '
+  expected_hash: f1ba1fa09a2cf86594b8a54f26949b219455e0363f84a886a2de9aee74ebbd77
+  expected_rows: 5
+  expected_preview: '[{"family": "Backup Appliance", "part_number": "HDD-SLED-16T", "quantity": 123}, {"family": "Edge Gateway",
+    "part_number": "HDD-SLED-08T", "quantity": 81}, {"family": "HCI Node", "part_number": "HDD-SLED-12T", "quantity": 203}]'
+- id: h04
+  question: How many cases are about an installed asset whose drive had a telemetry failure but never received a dispatch?
+  cypher: 'MATCH (c:Case)-[:ABOUT]->(:Asset)<-[:SAME_AS]-(:Drive {failed: 1})
+
+    WHERE NOT (c)<-[:RESOLVES]-(:Dispatch)
+
+    RETURN count(DISTINCT c) AS cases_without_dispatch
+
+    '
+  expected_hash: d0e48ee11cd59c7eb07e6c2c3afe76c868819bd188c30be22374529853929890
+  expected_rows: 1
+  expected_preview: '[{"cases_without_dispatch": 311}]'
+- id: h05
+  question: Which 2 technicians performed the most repeat dispatches (visit number greater than 1) on cases of category drive_failure?
+    Return technician_id and the repeat count.
+  cypher: 'MATCH (t:Technician)-[:PERFORMS]->(d:Dispatch)-[:RESOLVES]->(c:Case {category: ''drive_failure''})
+
+    WHERE d.visit_number > 1
+
+    RETURN t.technician_id AS technician_id, count(d) AS repeat_dispatches ORDER BY repeat_dispatches DESC, technician_id
+    LIMIT 2
+
+    '
+  expected_hash: d637a06fee24989edeb8fa490c189cfa573c75fcecfa3e1f5219d36dae2074b5
+  expected_rows: 2
+  expected_preview: '[{"technician_id": "TEC-0049", "repeat_dispatches": 18}, {"technician_id": "TEC-0046", "repeat_dispatches":
+    17}]'
+- id: h06
+  question: How many cases were opened within 7 days (inclusive) after the telemetry failure date of the drive linked to the
+    case's asset?
+  cypher: "MATCH (c:Case)-[:ABOUT]->(:Asset)<-[:SAME_AS]-(d:Drive)\nWHERE d.failure_date IS NOT NULL\n  AND date(left(c.opened_at,\
+    \ 10)) >= date(d.failure_date)\n  AND date(left(c.opened_at, 10)) <= date(d.failure_date) + duration({days: 7})\nRETURN\
+    \ count(DISTINCT c) AS cases_within_7_days\n"
+  expected_hash: 073ea973ae4c7f9280e98faad411be5073a9bb5c221113a6beb3a9a8c05c535c
+  expected_rows: 1
+  expected_preview: '[{"cases_within_7_days": 1302}]'
+- id: h07
+  question: Which users ran logged queries against tables that are derived, at any depth, from telemetry_daily? Return user_name
+    and the number of such queries, highest first.
+  cypher: 'MATCH (q:Query)-[:READS]->(t:Table)-[:DERIVED_FROM*1..12]->(:Table {name: ''telemetry_daily''})
+
+    RETURN q.user_name AS user_name, count(DISTINCT q) AS queries ORDER BY queries DESC, user_name
+
+    '
+  expected_hash: ff81eb6648028e8dde1c6693788fe09c550edb9ca40ed7ee5183a69b58b526b5
+  expected_rows: 6
+  expected_preview: '[{"user_name": "analyst_01", "queries": 59}, {"user_name": "etl_nightly", "queries": 54}, {"user_name":
+    "ops_lead", "queries": 52}]'
+- id: h08
+  question: Which data products include a table that has a column meaning the glossary term 'Service Failure (support)'? Return
+    the data product names.
+  cypher: 'MATCH (dp:DataProduct)-[:COMPOSED_OF]->(:Table)<-[:BELONGS_TO]-(:Column)-[:MEANS]->(:Term {label: ''Service Failure
+    (support)''})
+
+    RETURN DISTINCT dp.name AS data_product ORDER BY data_product
+
+    '
+  expected_hash: 084b986e685fd5c5c3ea9dc0c1e85328566fe4c95f7573407d6259b055b07a8b
+  expected_rows: 1
+  expected_preview: '[{"data_product": "dispatch_quality"}]'
+- id: h09
+  question: How many distinct suppliers are the preferred supplier of a part used by a product that is installed at a site
+    of the resolved account ACC-00148?
+  cypher: 'MATCH (:Account {account_id: ''ACC-00148''})-[:HAS]->(:Site)-[:HOSTS]->(:Asset)-[:IS_A]->(:Product)-[:USES]->(:Part)-[s:SUPPLIED_BY
+    {preferred: true}]->(sup:Supplier)
+
+    RETURN count(DISTINCT sup) AS preferred_suppliers
+
+    '
+  expected_hash: 9e0edf6af4d1e362ce1cf70e48f6060b923fa75e778e72b6051a3e65c1fc89d9
+  expected_rows: 1
+  expected_preview: '[{"preferred_suppliers": 7}]'
+- id: h10
+  question: Which vault has the most drives with a telemetry failure sitting in pods flagged risky? Return the vault key and
+    that count.
+  cypher: 'MATCH (d:Drive {failed: 1})-[:IN_POD]->(:Pod {risky: true})-[:IN_VAULT]->(v:Vault)
+
+    RETURN v.vault_key AS vault_key, count(d) AS failed_drives_in_risky_pods ORDER BY failed_drives_in_risky_pods DESC, vault_key
+    LIMIT 1
+
+    '
+  expected_hash: 1de8ef430db276d86d8047df489bc991daa7bc895c5d6242f72a2030e25dcc40
+  expected_rows: 1
+  expected_preview: '[{"vault_key": "sac2/1124", "failed_drives_in_risky_pods": 24}]'

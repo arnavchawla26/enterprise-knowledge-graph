@@ -1,7 +1,0 @@
-{
-  "backend": "nim",
-  "model": "nvidia/nemotron-3-super-120b-a12b",
-  "created": "2026-10-17T08:54:32.769377+00:00",
-  "messages_sha256": "090f1c44cc0095fc440c1801fb9e2ce944139f672286e1e6c5491c02faad8473",
-  "response": "```cypher\nMATCH (p:Part {part_number: 'HDD-SLED-12T'})-[r:SUPPLIED_BY]-(s:Supplier)\nRETURN avg(r.lead_time_days) AS average_parts_lead_time_days\n```"
-}

@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:40:50.024741+00:00",
+  "messages_sha256": "a14648126fe78d6c1888bebefb0398036e67a89744526d0124ae2ec4563b6149",
+  "response": "```cypher\nMATCH (t:Term {label: 'Service Failure (support)'})\nMATCH (c:Column)-[:MEANS]->(t)\nMATCH (tbl:Table)<-[:BELONGS_TO]-(c)\nMATCH (dp:DataProduct)-[:COMPOSED_OF]->(tbl)\nRETURN DISTINCT dp.name AS data_product_name\n```"
+}

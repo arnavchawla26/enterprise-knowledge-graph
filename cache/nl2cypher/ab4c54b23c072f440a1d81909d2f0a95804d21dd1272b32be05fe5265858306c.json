@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:26:49.507455+00:00",
+  "messages_sha256": "ab4c54b23c072f440a1d81909d2f0a95804d21dd1272b32be05fe5265858306c",
+  "response": "```cypher\nMATCH (a:Account)-[:HAS]->(:Site)-[:HOSTS]->(asset:Asset)<-[:SAME_AS]-(d:Drive)\nWHERE d.failed = 1\n  AND EXISTS {\n    MATCH (c:Case)-[:ABOUT]->(asset)\n    WHERE c.resolution_code IS NOT NULL\n  }\nRETURN a.name AS account_name, COUNT(DISTINCT d) AS failed_drive_count\nORDER BY failed_drive_count DESC, account_name\nLIMIT 2\n```"
+}

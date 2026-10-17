@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:24:11.141221+00:00",
+  "messages_sha256": "d75658109ded008fb6c86b9bbd11fa57c978e7f3b2eee9d9e511b4704adae5d6",
+  "response": "```cypher\nMATCH (s:Site)-[:HOSTS]->(a:Asset)\nRETURN s.site_id AS site_id, COUNT(a) AS asset_count\nORDER BY asset_count DESC, site_id ASC\nLIMIT 5\n```"
+}

@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:42:07.024975+00:00",
+  "messages_sha256": "432fe487722d3a4581404fbd5d31b19071fd35b1e02608d378f13ecc99e91319",
+  "response": "```cypher\nMATCH (dp:DataProduct)-[:COMPOSED_OF]->(t:Table)<-[:BELONGS_TO]-(c:Column)-[:MEANS]->(term:Term {label: 'Service Failure (support)'})\nRETURN DISTINCT dp.name AS name\nORDER BY name\n```"
+}

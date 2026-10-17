@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:42:11.430300+00:00",
+  "messages_sha256": "b2c0816d6f910135c1c4ecff6fa798718524cd9c9d174998f286fbd01386caa5",
+  "response": "```cypher\nMATCH (a:Account {account_id: 'ACC-00148'})-[:HAS]->(:Site)-[:HOSTS]->(:Asset)-[:IS_A]->(:Product)-[:USES]->(:Part)-[r:SUPPLIED_BY]->(s:Supplier)\nWHERE r.preferred IN [true, 1, 'true']\nRETURN count(DISTINCT s) AS preferred_supplier_count\n```"
+}

@@ -1,7 +1,0 @@
-{
-  "backend": "claude",
-  "model": "claude-sonnet-5-5",
-  "created": "2026-10-17T09:00:27.235806+00:00",
-  "messages_sha256": "e722ba589e0425341e162297d5067dd5a4977ca27c7d7f6c81329d452472c5ce",
-  "response": "```cypher\nMATCH (a:Account)\nRETURN count(DISTINCT a) AS resolved_accounts\n```"
-}

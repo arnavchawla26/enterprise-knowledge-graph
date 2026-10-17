@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:26:26.813907+00:00",
+  "messages_sha256": "6b105e3a11fe17e24c85c2b3bde3a0d02de657af7c46dea9882f11b28cf36e69",
+  "response": "```cypher\nMATCH (q:Query)\nRETURN q.user_name AS user_name, count(q) AS query_count\nORDER BY query_count DESC, user_name\nLIMIT 1\n```"
+}

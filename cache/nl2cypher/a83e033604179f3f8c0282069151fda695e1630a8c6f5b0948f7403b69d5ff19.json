@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:36:10.611850+00:00",
+  "messages_sha256": "a83e033604179f3f8c0282069151fda695e1630a8c6f5b0948f7403b69d5ff19",
+  "response": "```cypher\nMATCH (c:Case)-[:ABOUT]->(a:Asset)\nMATCH (d:Drive)-[:SAME_AS]->(a)\nWHERE d.failed = 1\nWITH c\nWHERE NOT EXISTS { MATCH (dispatch:Dispatch)-[:RESOLVES]->(c) }\nRETURN count(c) AS case_count\n```"
+}

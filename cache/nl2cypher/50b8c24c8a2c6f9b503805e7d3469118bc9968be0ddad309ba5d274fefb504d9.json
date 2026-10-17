@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:26:17.927498+00:00",
+  "messages_sha256": "50b8c24c8a2c6f9b503805e7d3469118bc9968be0ddad309ba5d274fefb504d9",
+  "response": "```cypher\nMATCH (a:Asset)\nWHERE a.warranty_end IS NULL\nRETURN count(a) AS unknown_warranty_assets\n```"
+}

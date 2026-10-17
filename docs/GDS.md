@@ -72,7 +72,11 @@ signal the SMART attributes do not already carry, at least not at this horizon a
 this little training history. The result is reported as measured, and the README does not
 claim graph features improve the model.
 
-What would be a fair next try: an embedding over the co-failure graph with a time cutoff
-(edges only among failures before the prediction date), or vault-level failure rates
-computed causally, both of which are time-aware features rather than identity encodings.
-Not done here.
+A fairer try would be time-aware: an embedding over the co-failure graph with edges only
+among failures before each prediction date, or causal vault-level failure rates. It is cut
+from this repository for a reason that is visible in the numbers above: a co-failure
+embedding restricted to failures before date t exists only for drives that have already
+failed by t, about 1,000 of 359,101 per date, so as a feature it is null for the fleet it is
+meant to rank; and the causal vault rate is a tabular prior, not a graph feature, so a lift
+from it would not be evidence for the graph. The 24 per-date projections it needs are cheap;
+the claim they could support is not one this repository wants to make.

@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:26:24.311049+00:00",
+  "messages_sha256": "61bbc1e2e1bf50d04e588e8d0365e192df42d9279b52140d58551099efb7d5de",
+  "response": "```cypher\nMATCH (d:DataProduct)-[:COMPOSED_OF]->(t:Table {name: 'pg.site'})\nRETURN d.name AS name\nORDER BY name\n```"
+}

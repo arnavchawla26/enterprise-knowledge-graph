@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:41:35.069167+00:00",
+  "messages_sha256": "4e4774aa7e9133bb26ea45bf07b4bfd634b2ccd8983a3f6642f4cfb409830f8f",
+  "response": "```cypher\nMATCH (a:Account)-[:HAS]->(:Site)-[:HOSTS]-(s:Asset)\nWITH a, count(DISTINCT s) AS n\nORDER BY n DESC, a.account_id\nLIMIT 1\nMATCH (a)-[:HAS]->(:Site)-[:HOSTS]-(s2:Asset)\nMATCH (c:Case)-[:ABOUT]-(s2)\nWHERE c.opened_at >= '2026-05-01' AND c.opened_at < '2026-06-01'\nRETURN"
+}

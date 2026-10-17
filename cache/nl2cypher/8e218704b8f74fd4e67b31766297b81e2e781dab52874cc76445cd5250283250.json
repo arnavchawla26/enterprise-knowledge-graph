@@ -1,7 +1,0 @@
-{
-  "backend": "claude",
-  "model": "claude-sonnet-5-5",
-  "created": "2026-10-17T09:00:29.991206+00:00",
-  "messages_sha256": "8e218704b8f74fd4e67b31766297b81e2e781dab52874cc76445cd5250283250",
-  "response": "```cypher\nMATCH (d:Drive)\nWHERE d.failed = 1\nRETURN count(d) AS failed_drives\n```"
-}

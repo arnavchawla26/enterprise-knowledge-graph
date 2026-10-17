@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:35:51.011593+00:00",
+  "messages_sha256": "05d8eef5bf1af0e8f5e518b40102395c95cca716f14e97bea01c4a2455269c46",
+  "response": "```cypher\nMATCH (acc:Account)-[:HAS]->(:Site)<-[:HOSTS]-(a:Asset)\nWITH acc, count(DISTINCT a) AS assetCnt\nORDER BY assetCnt DESC\nLIMIT 1\nMATCH (acc)-[:HAS]->(:Site)<-[:HOSTS]-(asset:Asset)\nMATCH (c:Case)-[:ABOUT]->(asset)\nWHERE date(c.opened_at) >= date('2026-05-01') AND date(c.opened_at) < date('2026-06-01')\nRETURN count(DISTINCT c) AS caseCount\n```"
+}

@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:24:16.026345+00:00",
+  "messages_sha256": "d366efaf76400fadd17528c0e1881cccdd82bff397e1bad86b31426ae751a647",
+  "response": "```cypher\nMATCH (d:Drive)\nWHERE d.failed = 1\nRETURN count(d) AS telemetry_failures\n```"
+}

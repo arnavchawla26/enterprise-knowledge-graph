@@ -100,10 +100,11 @@ def schema_prompt(session) -> str:
             nodes.setdefault(lab, set())
             if r["propertyName"]:
                 nodes[lab].add(r["propertyName"])
-    rels = session.run("""
-        CALL db.schema.visualization() YIELD relationships
-        UNWIND relationships AS r
-        RETURN DISTINCT labels(startNode(r))[0] AS a, type(r) AS t, labels(endNode(r))[0] AS b ORDER BY a, t, b""").data()
+    # the virtual nodes of db.schema.visualization carry their labels on the driver objects; Cypher's labels()
+    # on them returns [] on Neo4j 5.26, which printed (:None)-[:X]->(:None) patterns once the server was restarted
+    vis = session.run("CALL db.schema.visualization() YIELD relationships RETURN relationships").single()["relationships"]
+    rels = sorted({(sorted(r.start_node.labels)[0], r.type, sorted(r.end_node.labels)[0]) for r in vis if r.start_node.labels and r.end_node.labels})
+    rels = [{"a": a, "t": t, "b": b} for a, t, b in rels]
     terms = session.run("MATCH (t:Term) RETURN t.label AS label, t.neo4j_label AS lab, t.definition AS d, t.kind AS kind ORDER BY t.kind, t.label").data()
     reltypes = session.run("MATCH (r:RelationshipType) RETURN r.name AS n, r.definition AS d ORDER BY n").data()
     lines = ["Node labels and properties:"]
@@ -136,47 +137,58 @@ Return scalar answers as a single row with a single column."""
 
 
 # ---------------------------------------------------------------- backends and cache
+# Nemotron 3 Super reasons in its output budget before the answer: with 800 tokens the multi-hop questions
+# came back with empty content (the reasoning used the budget), so NIM gets 4000. Claude's answer is the
+# fenced query only. max_tokens is part of the cache key, so a budget change never reuses a response.
+MAX_TOKENS = {"nim": 4000, "claude": 800}
+
+
 @dataclass
 class Backend:
     name: str
     model: str
+    max_tokens: int = 800
 
     def complete(self, messages: list[dict]) -> str:
         if self.name == "nim":
             from openai import OpenAI
-            client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=os.environ["NVIDIA_API_KEY"])
-            r = client.chat.completions.create(model=self.model, messages=messages, temperature=0.0, max_tokens=800)
+            # 120 s per request, two retries: a hung request once stalled an eval for ten minutes at the library default
+            client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=os.environ["NVIDIA_API_KEY"], timeout=120.0, max_retries=2)
+            r = client.chat.completions.create(model=self.model, messages=messages, temperature=0.0, max_tokens=self.max_tokens)
             return r.choices[0].message.content or ""
         if self.name == "claude":
             import anthropic
             client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
             system = "\n\n".join(m["content"] for m in messages if m["role"] == "system")
             rest = [m for m in messages if m["role"] != "system"]
-            r = client.messages.create(model=self.model, max_tokens=800, system=system, messages=rest)
+            r = client.messages.create(model=self.model, max_tokens=self.max_tokens, system=system, messages=rest)
             return "".join(getattr(b, "text", "") for b in r.content)
         raise ValueError(f"unknown backend {self.name}")
 
 
 def backend_from_env(name: str) -> Backend:
     if name == "nim":
-        return Backend("nim", os.environ.get("NVIDIA_MODEL", "nvidia/nemotron-3-super-120b-a12b"))
+        return Backend("nim", os.environ.get("NVIDIA_MODEL", "nvidia/nemotron-3-super-120b-a12b"), MAX_TOKENS["nim"])
     if name == "claude":
-        return Backend("claude", os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5-5"))
+        return Backend("claude", os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5-5"), MAX_TOKENS["claude"])
     raise ValueError(name)
 
 
 def cached_complete(backend: Backend, messages: list[dict], cache_dir: Path = CACHE_DIR, offline: bool = False) -> tuple[str, bool]:
     """Returns (text, from_cache). offline=True never calls a model."""
-    key = hashlib.sha256(json.dumps({"backend": backend.name, "model": backend.model, "messages": messages}, sort_keys=True).encode()).hexdigest()
+    key = hashlib.sha256(json.dumps({"backend": backend.name, "model": backend.model, "max_tokens": backend.max_tokens,
+                                     "messages": messages}, sort_keys=True).encode()).hexdigest()
     p = cache_dir / f"{key}.json"
     if p.exists():
         return json.loads(p.read_text())["response"], True
     if offline:
         raise RuntimeError(f"no cached response for {backend.name}/{backend.model} and offline mode is on")
     text = backend.complete(messages)
+    if not text.strip():      # an empty answer (budget exhausted, transport hiccup) is a failed attempt, never a cached one
+        return text, False
     cache_dir.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps({"backend": backend.name, "model": backend.model, "created": datetime.now(timezone.utc).isoformat(),
-                             "messages_sha256": key, "response": text}, indent=2) + "\n")
+    p.write_text(json.dumps({"backend": backend.name, "model": backend.model, "max_tokens": backend.max_tokens,
+                             "created": datetime.now(timezone.utc).isoformat(), "messages_sha256": key, "response": text}, indent=2) + "\n")
     return text, False
 
 
@@ -274,6 +286,11 @@ def load_eval(path: Path = EVAL_PATH) -> list[dict]:
     return yaml.safe_load(path.read_text())["questions"]
 
 
+def report_stem(path: Path) -> str:
+    """questions/eval.yaml -> nl2cypher_eval; questions/hard.yaml -> nl2cypher_hard_eval."""
+    return "nl2cypher_eval" if path.stem == "eval" else f"nl2cypher_{path.stem}_eval"
+
+
 def freeze(driver, path: Path = EVAL_PATH) -> int:
     doc = yaml.safe_load(path.read_text())
     for q in doc["questions"]:
@@ -285,8 +302,10 @@ def freeze(driver, path: Path = EVAL_PATH) -> int:
     return len(doc["questions"])
 
 
-def evaluate(driver, backends: list[Backend], schema: str, reports: Path, offline: bool = False, log=print) -> dict:
-    questions = load_eval()
+def evaluate(driver, backends: list[Backend], schema: str, reports: Path, offline: bool = False, log=print,
+             questions_path: Path = EVAL_PATH) -> dict:
+    questions = load_eval(questions_path)
+    stem = report_stem(questions_path)
     reports.mkdir(parents=True, exist_ok=True)
     rows_out = []
     summary: dict = {}
@@ -309,11 +328,11 @@ def evaluate(driver, backends: list[Backend], schema: str, reports: Path, offlin
                            "seconds": round(time.time() - t0, 1)}
         log(f"{b.name}: {correct}/{len(questions)} correct ({summary[b.name]['execution_accuracy']:.0%}), {executed} executed, "
             f"{model_calls} model calls, {cached_calls} from cache")
-    with open(reports / "nl2cypher_eval.csv", "w", newline="") as f:
+    with open(reports / f"{stem}.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows_out[0].keys()))
         w.writeheader()
         w.writerows(rows_out)
-    (reports / "nl2cypher_eval_summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    (reports / f"{stem}_summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     return summary
 
 
@@ -326,6 +345,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--backend", nargs="*", default=["nim"])
     ap.add_argument("--offline", action="store_true", help="only use cached model responses")
     ap.add_argument("--reports", type=Path, default=Path("reports"))
+    ap.add_argument("--questions", type=Path, default=EVAL_PATH, help="question set (questions/eval.yaml or questions/hard.yaml)")
     a = ap.parse_args(argv)
     with neo4j_driver(read_only=True) as drv:
         with drv.session() as s:
@@ -334,14 +354,14 @@ def main(argv: list[str] | None = None) -> int:
             print(schema)
             return 0
         if a.command == "freeze":
-            print(f"froze {freeze(drv)} questions")
+            print(f"froze {freeze(drv, a.questions)} questions in {a.questions}")
             return 0
         if a.command == "ask":
             tr = ask(drv, backend_from_env(a.backend[0]), a.question, schema, offline=a.offline)
             print(json.dumps({"cypher": tr.cypher, "attempts": tr.attempts, "error": tr.error, "rows": tr.rows[:20],
                               "model_calls": tr.model_calls, "cached": tr.cached_calls}, indent=2, default=str))
             return 0 if tr.executed else 1
-        summary = evaluate(drv, [backend_from_env(b) for b in a.backend], schema, a.reports, offline=a.offline)
+        summary = evaluate(drv, [backend_from_env(b) for b in a.backend], schema, a.reports, offline=a.offline, questions_path=a.questions)
         print(json.dumps(summary, indent=2))
     return 0
 

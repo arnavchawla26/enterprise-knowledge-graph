@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:24:39.487940+00:00",
+  "messages_sha256": "8af36b42f631202e1ef17746009d0002fe4b3902dc0297a456c03d60f9759b0a",
+  "response": "```cypher\nMATCH (p:Part {part_number: 'HDD-SLED-12T'})-[r:SUPPLIED_BY]->()\nRETURN avg(r.lead_time_days) AS average_lead_time_days\n```"
+}

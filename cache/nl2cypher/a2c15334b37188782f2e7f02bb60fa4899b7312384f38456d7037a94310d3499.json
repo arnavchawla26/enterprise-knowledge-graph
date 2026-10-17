@@ -1,7 +1,0 @@
-{
-  "backend": "nim",
-  "model": "nvidia/nemotron-3-super-120b-a12b",
-  "created": "2026-10-17T08:54:22.300421+00:00",
-  "messages_sha256": "a2c15334b37188782f2e7f02bb60fa4899b7312384f38456d7037a94310d3499",
-  "response": "```cypher\nMATCH (d:Dispatch)\nWHERE d.visit_number > 1\nRETURN count(d) AS repeat_dispatch_count\n```"
-}

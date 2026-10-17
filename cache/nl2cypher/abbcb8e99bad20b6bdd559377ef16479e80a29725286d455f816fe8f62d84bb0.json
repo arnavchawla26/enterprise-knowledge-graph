@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:26:09.257084+00:00",
+  "messages_sha256": "abbcb8e99bad20b6bdd559377ef16479e80a29725286d455f816fe8f62d84bb0",
+  "response": "```cypher\nMATCH (t:Technician)-[:PERFORMS]->(d:Dispatch)\nRETURN t.technician_id AS technician_id, count(d) AS dispatch_count\nORDER BY dispatch_count DESC, technician_id\nLIMIT 1\n```"
+}

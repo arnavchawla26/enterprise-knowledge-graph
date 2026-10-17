@@ -1,7 +1,0 @@
-{
-  "backend": "claude",
-  "model": "claude-sonnet-5-5",
-  "created": "2026-10-17T09:00:39.738106+00:00",
-  "messages_sha256": "3f7338d007b0140250b80ab7cdb79583e9be3758bec5852728901e449b7c19e4",
-  "response": "The glossary defines a failure as a drive with Backblaze failure = 1, which is stored as `Drive.failed = 1`. I count those per model, order by the count descending and then by model, and keep the top 3.\n\n```cypher\nMATCH (d:Drive)\nWHERE d.failed = 1\nRETURN d.model AS model, count(d) AS failed_drives\nORDER BY failed_drives DESC, model\nLIMIT 3\n```"
-}

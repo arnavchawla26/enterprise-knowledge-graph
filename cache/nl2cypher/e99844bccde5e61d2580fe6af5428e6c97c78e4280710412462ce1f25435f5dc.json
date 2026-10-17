@@ -1,7 +1,0 @@
-{
-  "backend": "claude",
-  "model": "claude-sonnet-5-5",
-  "created": "2026-10-17T09:00:36.626139+00:00",
-  "messages_sha256": "e99844bccde5e61d2580fe6af5428e6c97c78e4280710412462ce1f25435f5dc",
-  "response": "```cypher\nMATCH (p:Part {part_number: 'HDD-SLED-12T'})-[r:SUPPLIED_BY]->(s:Supplier)\nRETURN avg(r.lead_time_days) AS avg_lead_time_days\n```"
-}

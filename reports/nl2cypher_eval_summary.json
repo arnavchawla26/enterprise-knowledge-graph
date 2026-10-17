@@ -6,8 +6,8 @@
     "correct": 20,
     "execution_accuracy": 1.0,
     "model_calls": 0,
-    "cached_calls": 22,
-    "seconds": 0.2
+    "cached_calls": 21,
+    "seconds": 0.3
   },
   "claude": {
     "model": "claude-sonnet-5-5",
@@ -17,6 +17,6 @@
     "execution_accuracy": 1.0,
     "model_calls": 0,
     "cached_calls": 20,
-    "seconds": 0.2
+    "seconds": 0.3
   }
 }

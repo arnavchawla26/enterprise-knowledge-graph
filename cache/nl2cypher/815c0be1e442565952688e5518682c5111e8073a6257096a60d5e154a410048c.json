@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:25:10.962676+00:00",
+  "messages_sha256": "815c0be1e442565952688e5518682c5111e8073a6257096a60d5e154a410048c",
+  "response": "```cypher\nMATCH (a:Asset)\nWHERE a.warranty_end IS NULL\nRETURN count(a) AS unknown_warranty_count\n```"
+}

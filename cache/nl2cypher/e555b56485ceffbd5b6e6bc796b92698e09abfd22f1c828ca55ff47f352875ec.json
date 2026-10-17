@@ -1,7 +1,0 @@
-{
-  "backend": "claude",
-  "model": "claude-sonnet-5-5",
-  "created": "2026-10-17T09:00:49.287422+00:00",
-  "messages_sha256": "e555b56485ceffbd5b6e6bc796b92698e09abfd22f1c828ca55ff47f352875ec",
-  "response": "```cypher\nMATCH (dp:DataProduct)-[:COMPOSED_OF]->(t:Table {name: 'pg.site'})\nRETURN DISTINCT dp.name AS name\nORDER BY name\n```"
-}

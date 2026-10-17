@@ -1,7 +1,0 @@
-{
-  "backend": "claude",
-  "model": "claude-sonnet-5-5",
-  "created": "2026-10-17T09:00:34.334633+00:00",
-  "messages_sha256": "07624a53db27543d9cce6ac2d2a604d9762bf0961d6918db2c07fd2f06bb8864",
-  "response": "```cypher\nMATCH (t:Technician)-[:PERFORMS]->(d:Dispatch)\nRETURN t.technician_id AS technician_id, count(d) AS dispatch_count\nORDER BY dispatch_count DESC, technician_id\nLIMIT 1\n```"
-}

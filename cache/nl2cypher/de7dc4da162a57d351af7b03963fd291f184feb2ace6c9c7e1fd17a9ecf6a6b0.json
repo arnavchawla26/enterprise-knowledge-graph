@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:36:18.121654+00:00",
+  "messages_sha256": "de7dc4da162a57d351af7b03963fd291f184feb2ace6c9c7e1fd17a9ecf6a6b0",
+  "response": "```cypher\nMATCH (d:Dispatch), (c:Case)\nWHERE d.case_id = c.case_id\n  AND d.visit_number > 1\n  AND c.category = 'drive_failure'\nMATCH (t:Technician {technician_id: d.technician_id})\nRETURN t.technician_id AS technician_id, COUNT(*) AS repeat_count\nORDER BY repeat_count DESC, t.technician_id\nLIMIT 2\n```"
+}

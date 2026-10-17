@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:40:42.954780+00:00",
+  "messages_sha256": "76ff519b820b3667f09e6e689a6e3dc65adf6956958949fda6320d372247f7e5",
+  "response": "```cypher\nMATCH (t0:Table {name:'telemetry_daily'})\nOPTIONAL MATCH (j1:Job)-[:READS]->(t0)\nOPTIONAL MATCH (j1)-[:PRODUCED_BY]->(t1)\nOPTIONAL MATCH (j2:Job)-[:READS]->(t1)\nOPTIONAL MATCH (j2)-[:PRODUCED_BY]->(t2)\nOPTIONAL MATCH (j3:Job)-[:READS]->(t2)\nOPTIONAL MATCH (j3)-[:PRODUCED_BY]->(t3)\nWITH t0,\n     CASE WHEN t1 IS NOT NULL THEN t1 END AS t1,\n     CASE WHEN t2 IS NOT NULL THEN t2 END AS t2,\n     CASE WHEN t3 IS NOT NULL THEN t3 END AS t3\nWITH [t0, t1, t2, t3] AS lst\nUNWIND lst AS t\nWHERE t IS NOT NULL\nWITH collect(DISTINCT t) AS derivedTables\nMATCH (q:Query)-[:READS]->(t)\nWHERE t IN derivedTables\nRETURN q.user_name AS user_name, count(*) AS query_count\nORDER BY query_count DESC, user_name\n```"
+}

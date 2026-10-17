@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:41:18.783907+00:00",
+  "messages_sha256": "e7f91e6a6d155e7ffd967425abfe9a2648f411b68e3091b18f692b17f7f852b9",
+  "response": "```cypher\nMATCH (d:Drive), (p:Pod)\nWHERE d.pod_id = p.pod_id\n  AND d.vault_id = p.vault_id\n  AND p.risky = true\n  AND d.failed = 1\nWITH p.vault_key AS vault_key, count(d) AS failed_drive_count\nRETURN vault_key, failed_drive_count\nORDER BY failed_drive_count DESC, vault_key\nLIMIT 1\n```"
+}

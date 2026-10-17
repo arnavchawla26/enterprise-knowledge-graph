@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:41:07.019401+00:00",
+  "messages_sha256": "e4f8650e972b76f27865ff6da190ee3a519b367029dc8350f671213b591a7d01",
+  "response": "```cypher\nMATCH (acc:Account {account_id: 'ACC-00148'})-[:HAS]->(site:Site)\nMATCH (asset:Asset)-[:HOSTS]->(site)\nMATCH (asset)-[:IS_A]->(product:Product)\nMATCH (product)-[:USES]->(part:Part)\nMATCH (sup:Supplier)-[rel:SUPPLIED_BY]->(part)\nWHERE rel.preferred = true\nRETURN COUNT(DISTINCT sup) AS supplier_count\n```"
+}

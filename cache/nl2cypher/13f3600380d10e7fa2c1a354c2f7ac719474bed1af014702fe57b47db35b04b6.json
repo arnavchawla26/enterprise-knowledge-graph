@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:26:20.116818+00:00",
+  "messages_sha256": "13f3600380d10e7fa2c1a354c2f7ac719474bed1af014702fe57b47db35b04b6",
+  "response": "```cypher\nMATCH (r:AccountRecord)-[:SAME_AS]->(a:Account {account_id: 'ACC-00009'})\nRETURN count(r) AS record_count\n```"
+}

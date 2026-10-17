@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:41:23.928806+00:00",
+  "messages_sha256": "912dc49e792425b6d71e02be803c15cf0137ec889a956615e32364e69180dc09",
+  "response": "```cypher\nMATCH (a:Account)-[:HAS]->(:Site)-[:HOSTS]->(s:Asset)<-[:SAME_AS]-(d:Drive)\nWHERE d.failed = 1\nRETURN a.name AS account_name, count(DISTINCT d) AS failed_drive_count\nORDER BY failed_drive_count DESC, account_name\nLIMIT 2\n```"
+}

@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:23:40.270032+00:00",
+  "messages_sha256": "033e6120e857556e41d0ec5d5d5c3a4adae763a11c8f2e4637fb3a85e53e3bb0",
+  "response": "```cypher\nMATCH (d:Dispatch)-[:RESOLVES]->(c:Case)-[:ABOUT]->(a:Asset)-[:IS_A]->(p:Product)\nMATCH (d)-[u:USED]->(part:Part)\nWITH p.family AS family,\n     part.part_number AS part_number,\n     SUM(u.quantity) AS total_qty\nORDER BY family, total_qty DESC, part_number\nWITH family,\n     collect({part_number: part_number, total_qty: total_qty}) AS ranked_parts\nWHERE size(ranked_parts) > 0\nRETURN family,\n       ranked_parts[0].part_number AS part_number,\n       ranked_parts[0].total_qty   AS total_quantity\n```"
+}

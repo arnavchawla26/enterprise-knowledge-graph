@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:42:14.619277+00:00",
+  "messages_sha256": "124181f168470647b015dbe27708393351082bf743b977a9c725c8417f1e12f8",
+  "response": "```cypher\nMATCH (p:Pod)\nWHERE p.risky = true\nMATCH (d:Drive)\nWHERE d.pod_key = p.pod_key AND d.failed = 1\nRETURN p.vault_key AS vault_key, count(d) AS failed_drives\nORDER BY failed_drives DESC, vault_key\nLIMIT 1\n```"
+}

@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:41:53.305565+00:00",
+  "messages_sha256": "8958d631e60a28722bb611516e282de4e63e4443fd15a333afe46ea531542727",
+  "response": "```cypher\nMATCH (c:Case)-[:ABOUT]->(a:Asset)<-[:SAME_AS]-(d:Drive)\nWHERE d.failure_date IS NOT NULL AND c.opened_at IS NOT NULL\nWITH c, date(substring(c.opened_at, 0, 10)) AS opened, date(substring(d.failure_date, 0, 10)) AS failed_on\nWHERE opened >= failed_on AND opened <= failed_on + duration({days: 7})\nRETURN count(DISTINCT c) AS cases\n```"
+}

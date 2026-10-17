@@ -104,13 +104,19 @@ graph adds no signal the SMART attributes lack at this horizon. This README does
 graph features improve the model.
 
 ### Text-to-Cypher ([docs/NL2CYPHER.md](docs/NL2CYPHER.md))
-20 questions with gold Cypher and frozen result hashes. Execution accuracy: NVIDIA NIM
-(`nvidia/nemotron-3-super-120b-a12b`) 20/20 with two questions fixed on a retry by the
-loop; Claude (`claude-sonnet-5-5`) 20/20 first try. The set is one- and two-hop lookups
-over a fully spelled-out schema plus the glossary; a harder set would score lower.
-Responses are cached on disk and committed, so `make eval` reruns with zero model calls.
-Writes are refused by a guard before execution and by the server's read access mode; Neo4j
-Community has no roles, so the separate reader account is hygiene, not enforcement.
+Two question sets with gold Cypher and frozen result hashes. The 20 one- and two-hop
+questions: NVIDIA NIM (`nvidia/nemotron-3-super-120b-a12b`) 20/20 with one question fixed on
+a retry by the loop; Claude (`claude-sonnet-5-5`) 20/20 first try. The 10 multi-hop questions
+(three to six hops, a per-group argmax, a NOT pattern, date arithmetic, a variable-length
+lineage walk, the semantic layer): Claude 10/10 with two questions needing the loop; NIM
+5/10, and four of its five misses executed and returned a plausible wrong row (reversed
+relationship directions, an invented filter, a regex that never matches), which the loop
+cannot see because the database raises no error. The hard set also found two harness faults,
+fixed and described in the doc: NIM's reasoning ate an 800-token budget and returned empty
+answers that were cached, and the NIM client had no timeout. Responses are cached on disk and
+committed, so `make eval` reruns both sets with zero model calls. Writes are refused by a
+guard before execution and by the server's read access mode; Neo4j Community has no roles, so
+the separate reader account is hygiene, not enforcement.
 
 ### Context-assembly API ([docs/API.md](docs/API.md))
 `POST /context {question, caller_role}` returns terms, tables, columns, runbooks and a graph
@@ -135,12 +141,11 @@ a committed saved-objects export and a headless screenshot.
 
 ## What this does not yet support
 
-Words a reader might expect that this repository does not earn yet: column-level lineage
-(job-level only); a learned entity matcher (the shipped one is scored rules, measured on
-generated mess); any lift from graph features (measured negative); a hard text-to-Cypher
-benchmark (the eval set is easy); enterprise role enforcement in Neo4j (Community edition);
-and a real query history (300 generated rows). The ontology is governed by a test, not by a
-review process.
+Words a reader might expect that this repository does not earn: a learned entity matcher (the
+shipped one is scored rules, measured on generated mess); any lift from graph features
+(measured negative); enterprise role enforcement in Neo4j (Community edition); and a real
+query history (300 generated rows). The ontology is governed by a test, not by a review
+process.
 
 ## How to run
 
@@ -152,7 +157,7 @@ containers (each JVM is capped at 1 GB).
 ```
 cp .env.example .env                     # Neo4j and Elasticsearch settings; model keys optional
 uv sync                                  # pinned environment
-uv run pytest                            # 60 tests on fixtures; live tests skip without Neo4j
+uv run pytest                            # 65 tests on fixtures; live tests skip without Neo4j
 make up                                  # Neo4j 5.26 community (APOC, GDS), Elasticsearch 8.17, Kibana 8.17
 make load                                # ontology check + render, graph load (about a minute)
 make resolve                             # entity resolution, metrics, review list, SAME_AS edges
@@ -175,7 +180,7 @@ make api                                 # context API on :8008
 ontology/     enterprise.ttl (SKOS/OWL-lite), glossary.md (rendered)
 lineage/      pipeline.yaml (the real pipeline and its column lineage, declared and tested)
 policy/       roles.yaml (per-role allow-lists for the API)
-questions/    eval.yaml (20 questions, gold Cypher, frozen result hashes)
+questions/    eval.yaml (20 questions), hard.yaml (10 multi-hop questions); gold Cypher, frozen result hashes
 trust/        slas.yaml, schema_baseline.json
 kibana/       trust_dashboard.ndjson (saved objects)
 cache/        nl2cypher model responses (committed; reruns are free)
@@ -183,7 +188,7 @@ src/ekg/      config, graph, ontology, load, resolve, lineage, gds, nl2cypher, a
 scripts/      screenshot_kibana.py
 reports/      metrics JSON/CSV, communities, centrality, eval, trust results, dashboard PNG
 docs/         RESOLUTION, LINEAGE, GDS, NL2CYPHER, API, TRUST
-tests/        60 tests on hand-made fixtures (6 assets, 8 account rows, every mess rule once)
+tests/        65 tests on hand-made fixtures (6 assets, 8 account rows, every mess rule once, the real column names)
 ```
 
 ## Honesty

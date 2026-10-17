@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:26:01.934716+00:00",
+  "messages_sha256": "b0c025e160614172d5cafa1284e64aede5629e2ed3041f9ce928bd63f219dee5",
+  "response": "```cypher\nMATCH (a:Asset)\nRETURN count(a) AS installed_assets\n```"
+}

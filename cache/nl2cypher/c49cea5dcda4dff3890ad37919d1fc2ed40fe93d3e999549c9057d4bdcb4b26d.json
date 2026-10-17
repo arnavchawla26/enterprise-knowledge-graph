@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:24:20.610783+00:00",
+  "messages_sha256": "c49cea5dcda4dff3890ad37919d1fc2ed40fe93d3e999549c9057d4bdcb4b26d",
+  "response": "```cypher\nMATCH (c:Case)\nRETURN c.category AS category, count(*) AS count\nORDER BY count DESC, category ASC\n```"
+}

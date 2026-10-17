@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:41:44.906520+00:00",
+  "messages_sha256": "a7ced4c58050350039415ff84c48ce3fc1a85b3b36b5d76dc6c86b473d48ca50",
+  "response": "```cypher\nMATCH (p:Product)<-[:IS_A]-(a:Asset)<-[:ABOUT]-(c:Case)<-[:RESOLVES]-(d:Dispatch)-[u:USED]->(pt:Part)\nWITH p.family AS family, pt.part_number AS part_number, sum(u.quantity) AS total\nORDER BY family, total DESC, part_number\nWITH family, collect({part_number: part_number, total: total})[0] AS top\nRETURN family, top.part_number AS part_number, top.total AS total\nORDER BY family\n```"
+}

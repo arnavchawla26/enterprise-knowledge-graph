@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:37:53.596932+00:00",
+  "messages_sha256": "70098e6c0325a727b77d021720c7ec56013064630248f86ce36cc0d42496e0c8",
+  "response": "```cypher\nMATCH (src:Table {name: 'telemetry_daily'})\nMATCH (src)-[r*1..]-(dest:Table)\nWHERE size(r) % 2 = 0 AND size(r) >= 2\nWITH collect(dest) AS derivedTables\nMATCH (q:Query)-[:READS]->(t)\nWHERE t IN derivedTables\nRETURN q.user_name AS user_name, count(*) AS query_count\nORDER BY query_count DESC, user_name\n```"
+}

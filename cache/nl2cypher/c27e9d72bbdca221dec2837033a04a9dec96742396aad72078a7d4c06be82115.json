@@ -1,0 +1,8 @@
+{
+  "backend": "claude",
+  "model": "claude-sonnet-5-5",
+  "max_tokens": 800,
+  "created": "2026-10-17T10:41:47.773621+00:00",
+  "messages_sha256": "c27e9d72bbdca221dec2837033a04a9dec96742396aad72078a7d4c06be82115",
+  "response": "```cypher\nMATCH (c:Case)-[:ABOUT]->(a:Asset)<-[:SAME_AS]-(d:Drive)\nWHERE d.failed = 1\n  AND NOT EXISTS { (:Dispatch)-[:RESOLVES]->(c) }\nRETURN count(DISTINCT c) AS cases\n```"
+}

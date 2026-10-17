@@ -1,0 +1,8 @@
+{
+  "backend": "nim",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "max_tokens": 4000,
+  "created": "2026-10-17T10:25:28.400276+00:00",
+  "messages_sha256": "15765fca3fcc7b9fe4f4e1b5b015b261b45127964df5c4a7de86e37facdccc92",
+  "response": "```cypher\nMATCH (acc:Account {account_id: 'ACC-00009'})-[:HAS]->(site:Site)<-[:HOSTS]-(asset:Asset)<-[:ABOUT]-(c:Case)\nRETURN count(c) AS caseCount\n```"
+}

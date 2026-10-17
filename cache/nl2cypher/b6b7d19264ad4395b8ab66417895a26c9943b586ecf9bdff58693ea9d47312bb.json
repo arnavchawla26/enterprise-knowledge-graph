@@ -1,7 +1,0 @@
-{
-  "backend": "claude",
-  "model": "claude-sonnet-5-5",
-  "created": "2026-10-17T09:00:28.554178+00:00",
-  "messages_sha256": "b6b7d19264ad4395b8ab66417895a26c9943b586ecf9bdff58693ea9d47312bb",
-  "response": "```cypher\nMATCH (s:Site)-[:HOSTS]->(a:Asset)\nRETURN s.site_id AS site_id, count(DISTINCT a) AS asset_count\nORDER BY asset_count DESC, site_id\nLIMIT 5\n```"
-}

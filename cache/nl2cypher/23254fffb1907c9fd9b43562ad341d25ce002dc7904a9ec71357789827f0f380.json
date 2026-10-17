@@ -1,7 +1,0 @@
-{
-  "backend": "claude",
-  "model": "claude-sonnet-5-5",
-  "created": "2026-10-17T09:00:52.196860+00:00",
-  "messages_sha256": "23254fffb1907c9fd9b43562ad341d25ce002dc7904a9ec71357789827f0f380",
-  "response": "```cypher\nMATCH (q:Query)\nRETURN q.user_name AS user_name, count(q) AS query_count\nORDER BY query_count DESC, user_name\nLIMIT 1\n```"
-}

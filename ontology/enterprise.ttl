@@ -1,0 +1,230 @@
+# Enterprise ontology v0 for the services-ops enterprise (Dell project 2 of 3).
+# SKOS for the glossary (one skos:definition per term), OWL-lite for the
+# entity classes and the relationships between them. Every term carries
+# ekg:source (which Project 1 table or file defines it) and, where it is a
+# derived measure, ekg:rule (how it is computed). Definitions of the two
+# failure terms are copied from services-ops-intelligence docs/MESS_RULES.md
+# rule F1; nothing here redefines a Project 1 term.
+#
+# Rendered to ontology/glossary.md and loaded into Neo4j as :Term nodes by
+# `uv run python -m ekg.ontology`.
+
+@prefix ekg:  <https://github.com/arnavchawla26/enterprise-knowledge-graph/ontology#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+ekg: a owl:Ontology ;
+    dct:title "Enterprise ontology v0 (services-ops enterprise)" ;
+    owl:versionInfo "0.1" ;
+    dct:description "Business and data terms for one small enterprise: CRM, ERP, supply chain, support and telemetry, plus the metadata layer that describes the data itself." .
+
+ekg:Glossary a skos:ConceptScheme ;
+    skos:prefLabel "Enterprise glossary" .
+
+# ------------------------------------------------------------ annotation properties
+ekg:source a owl:AnnotationProperty ; rdfs:label "source" ;
+    skos:definition "Project 1 table, column or file this term is read from." .
+ekg:rule a owl:AnnotationProperty ; rdfs:label "rule" ;
+    skos:definition "How a derived term is computed, in one sentence." .
+ekg:neo4jLabel a owl:AnnotationProperty ; rdfs:label "Neo4j label" .
+ekg:kind a owl:AnnotationProperty ; rdfs:label "kind" ;
+    skos:definition "entity (a thing with its own node), measure (a derived number or flag), or metadata (describes the data itself)." .
+
+# ------------------------------------------------------------ entity terms (classes)
+ekg:Account a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Account" ; ekg:kind "entity" ; ekg:neo4jLabel "Account" ;
+    skos:definition "A customer company. One Account per real company, whatever spelling or account_id the CRM rows carry; the CRM rows themselves are AccountRecord nodes linked to their Account by a scored SAME_AS edge." ;
+    ekg:source "account.csv (CRM), truth/account_resolution.csv for the canonical id" ;
+    skos:altLabel "customer", "company", "client" .
+
+ekg:AccountRecord a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Account Record" ; ekg:kind "entity" ; ekg:neo4jLabel "AccountRecord" ;
+    skos:definition "One row of the CRM account table as the source system holds it: account_row_id, account_id, account_name, source_system. Several records can describe one Account (MESS_RULES A1 to A3)." ;
+    ekg:source "account.csv" .
+
+ekg:Site a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Site" ; ekg:kind "entity" ; ekg:neo4jLabel "Site" ;
+    skos:definition "A customer location (address, city, region) that belongs to one Account and hosts installed assets. Drives that share a Backblaze (datacenter, vault) are placed at one site, so a site is also the physical failure-clustering unit." ;
+    ekg:source "site.csv" ;
+    skos:altLabel "location", "data center", "customer site" .
+
+ekg:InstalledAsset a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Installed Asset" ; ekg:kind "entity" ; ekg:neo4jLabel "Asset" ;
+    skos:definition "A unit of hardware the ERP says is installed at a Site: asset_id, serial_number, product, install_date, warranty_end, status. Every installed asset is one real drive from the telemetry; the ERP serial may carry a vendor prefix or lowercase (MESS_RULES S1, S2), so the telemetry Drive record is linked to the Asset by a scored SAME_AS edge." ;
+    ekg:source "installed_asset.csv (ERP); telemetry_drive_summary (Postgres) for the drive side" ;
+    skos:altLabel "asset", "drive", "installed base", "unit" .
+
+ekg:Drive a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Drive (telemetry record)" ; ekg:kind "entity" ; ekg:neo4jLabel "Drive" ;
+    skos:definition "The telemetry's view of one physical drive: serial_number, model, datacenter, vault, pod, first and last day seen, failure date, last SMART 5/187/197 raw values and Project 1's calibrated 30-day failure probability. Daily telemetry rows stay out of the graph; only this per-drive summary is loaded." ;
+    ekg:source "telemetry_drive_summary (Postgres), data/parquet/telemetry_daily for the last SMART values, models/test_scores.parquet for p_fail_30d" .
+
+ekg:Product a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Product" ; ekg:kind "entity" ; ekg:neo4jLabel "Product" ;
+    skos:definition "A sellable SKU (product_id, name, family, drive bays, list price, capacity class). Ten generic SKUs in five families; none is a real product." ;
+    ekg:source "product.csv (ERP)" ;
+    skos:altLabel "SKU", "model", "product family" .
+
+ekg:Part a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Part" ; ekg:kind "entity" ; ekg:neo4jLabel "Part" ;
+    skos:definition "A field-replaceable component (part_id, part_number, category, unit cost) that a dispatch can consume: drive sleds by capacity, PSUs, fans, DIMMs, controllers, backplanes, NICs, cables, boards, chassis." ;
+    ekg:source "part.csv, dispatch_part.csv" ;
+    skos:altLabel "component", "FRU", "spare" .
+
+ekg:Supplier a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Supplier" ; ekg:kind "entity" ; ekg:neo4jLabel "Supplier" ;
+    skos:definition "A company that supplies parts. Each part has one to three suppliers with a lead time and a unit cost; the first is marked preferred." ;
+    ekg:source "supplier.csv, part_supplier.csv" ;
+    skos:altLabel "vendor" .
+
+ekg:Case a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Case" ; ekg:kind "entity" ; ekg:neo4jLabel "Case" ;
+    skos:definition "A support ticket about one installed asset: opened_at, closed_at, category, severity, description, resolution_code, failure_reported, source_system. Timestamps come in two formats by source system (MESS_RULES D1); the graph stores them parsed to ISO plus the original string." ;
+    ekg:source "case.csv (support)" ;
+    skos:altLabel "ticket", "support case", "incident" .
+
+ekg:Dispatch a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Dispatch" ; ekg:kind "entity" ; ekg:neo4jLabel "Dispatch" ;
+    skos:definition "A technician visit scheduled for a case: scheduled_at, visit_number, outcome (resolved, parts_not_available, no_fault_found, incomplete), and the parts used." ;
+    ekg:source "dispatch.csv, dispatch_part.csv" ;
+    skos:altLabel "truck roll", "visit", "field service visit" .
+
+ekg:Technician a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Technician" ; ekg:kind "entity" ; ekg:neo4jLabel "Technician" ;
+    skos:definition "A field engineer with a home region, a skill list (storage, server, network, firmware, hci) and a hire date, who performs dispatches in their region." ;
+    ekg:source "technician.csv" ;
+    skos:altLabel "field engineer", "engineer", "tech" .
+
+ekg:Runbook a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Runbook" ; ekg:kind "entity" ; ekg:neo4jLabel "Runbook" ;
+    skos:definition "A written procedure (title, product family, category, symptoms, numbered steps) that covers one product family. A case whose symptoms match a runbook may be deflectable." ;
+    ekg:source "runbook.csv" ;
+    skos:altLabel "knowledge article", "KB article", "procedure" .
+
+# ------------------------------------------------------------ measure terms (derived)
+ekg:TelemetryFailure a skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Failure (telemetry)" ; ekg:kind "measure" ;
+    skos:definition "A drive-day with Backblaze failure = 1: the last day the drive reported before it was pulled from service. One failure row per drive. This is the label the Project 1 failure model predicts." ;
+    ekg:source "telemetry_daily.failure; telemetry_drive_summary.failed and failure_date" ;
+    ekg:rule "failure = 1 on a drive-day" ;
+    skos:altLabel "drive failure", "telemetry failure", "failed drive", "pulled drive" ;
+    skos:related ekg:ServiceFailure .
+
+ekg:ServiceFailure a skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Service Failure (support)" ; ekg:kind "measure" ;
+    skos:definition "A case with failure_reported = 1, set when the case ended in resolution_code = hardware_replaced. It overlaps the telemetry failure but does not match it: some part swaps happen with no telemetry failure (proactive or mis-diagnosed), about 15% of telemetry failures never raise a case, and a telemetry failure can close as no_fault_found (MESS_RULES F1)." ;
+    ekg:source "case.failure_reported" ;
+    ekg:rule "case.failure_reported = 1, i.e. resolution_code = hardware_replaced" ;
+    skos:altLabel "support failure", "reported failure", "hardware replaced" ;
+    skos:related ekg:TelemetryFailure .
+
+ekg:RepeatDispatch a skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Repeat Dispatch" ; ekg:kind "measure" ;
+    skos:definition "A dispatch that is either visit 2 or 3 on a case that already had a truck (same_case: dispatch.visit_number > 1), or the first visit of a case on an asset whose previous dispatched case closed within the 30 days before this visit was scheduled (cross_case). Definition from Project 1 sois.repeat_dispatch." ;
+    ekg:source "dispatch.visit_number, case.closed_at; truth/dispatch_truth.csv.is_repeat to check" ;
+    ekg:rule "visit_number > 1, or first visit within 30 days of a closed dispatched case on the same asset" ;
+    skos:altLabel "repeat visit", "repeat truck roll", "second visit" .
+
+ekg:DeflectableCase a skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Deflectable Case" ; ekg:kind "measure" ;
+    skos:definition "A case the customer could have closed from a matching runbook without a technician: how_to, config or firmware questions at severity 3 or 4 with a covering runbook, and false alarms. The graph marks a case deflectable only from ground truth (truth/case_truth.csv.deflectable); predicting it is Project 3's job." ;
+    ekg:source "truth/case_truth.csv.deflectable, deflect_reason, matching_runbook_id" ;
+    ekg:rule "ground truth flag; generator draws it with probability 0.85 for how_to/config/firmware at severity 3-4 with a matched runbook, 0.6 for false_alarm, 0.03 otherwise" ;
+    skos:altLabel "self-service case", "avoidable case" .
+
+ekg:FleetHealth a skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Fleet Health" ; ekg:kind "measure" ;
+    skos:definition "For a site, account or the whole fleet on the scoring date: the expected number of drive failures in the next 30 days, the sum of Project 1's calibrated p_fail_30d over the drives, together with the count the Backblaze SMART rule flags. Lower expected failures per drive is healthier." ;
+    ekg:source "reports/fleet_risk_sites.csv (expected_failures_30d, heuristic_flagged); Drive.p_fail_30d in the graph" ;
+    ekg:rule "sum(p_fail_30d) over the drives of the unit" ;
+    skos:altLabel "site health", "fleet risk", "expected failures" .
+
+ekg:RiskyPod a skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Risky Pod" ; ekg:kind "measure" ;
+    skos:definition "A pod (datacenter, vault_id, pod_id) whose drives' summed p_fail_30d on the scoring date ranks in the top 5% of pods with at least 10 scored drives. Stored as Pod.risky in the graph with the threshold that produced it." ;
+    ekg:source "Drive.p_fail_30d aggregated by Pod by ekg.load" ;
+    ekg:rule "sum(p_fail_30d) per pod >= 95th percentile over pods with >= 10 scored drives" ;
+    skos:altLabel "hot pod", "high-risk pod" .
+
+ekg:WarrantyStatus a skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Warranty Status" ; ekg:kind "measure" ;
+    skos:definition "For an installed asset on a date d: in_warranty when warranty_end >= d, expired when warranty_end < d, unknown when warranty_end is null. Null means unknown, not expired (MESS_RULES W1: 10% of assets)." ;
+    ekg:source "installed_asset.warranty_end" ;
+    ekg:rule "compare warranty_end to the date asked about; null is unknown" ;
+    skos:altLabel "under warranty", "out of warranty", "warranty" .
+
+ekg:PartsLeadTime a skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Parts Lead Time" ; ekg:kind "measure" ;
+    skos:definition "For a part and a supplier: part_supplier.lead_time_days, the days from order to receipt at the depot. A part's lead time with no supplier named is that of its preferred supplier." ;
+    ekg:source "part_supplier.lead_time_days, part_supplier.preferred" ;
+    ekg:rule "lead_time_days of the (part, supplier) pair; default the preferred supplier" ;
+    skos:altLabel "lead time", "supplier lead time" .
+
+# ------------------------------------------------------------ metadata terms (the data about the data)
+ekg:Table a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Table" ; ekg:kind "metadata" ; ekg:neo4jLabel "Table" ;
+    skos:definition "A relational table or a file-backed dataset (Postgres table, Parquet directory, CSV, or a report file under reports/). Has columns, is produced by a job, and is read by queries and jobs." ;
+    ekg:source "Postgres information_schema, lineage.csv, Project 1 pipeline" .
+
+ekg:Column a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Column" ; ekg:kind "metadata" ; ekg:neo4jLabel "Column" ;
+    skos:definition "A named, typed field of a table. A column may MEAN a glossary term, which is how the semantic layer attaches a definition to a number." ;
+    ekg:source "Postgres information_schema.columns" .
+
+ekg:DataProduct a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Data Product" ; ekg:kind "metadata" ; ekg:neo4jLabel "DataProduct" ;
+    skos:definition "A named, owned bundle of tables with a freshness SLA, served to consumers as one unit (fleet_health, parts_demand, dispatch_quality)." ;
+    ekg:source "data_product.csv, trust/slas.yaml" .
+
+ekg:Job a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Job" ; ekg:kind "metadata" ; ekg:neo4jLabel "Job" ;
+    skos:definition "A scheduled or on-demand program that reads tables and produces tables or report files (sois.load_telemetry, sois.generate_enterprise, sois.load_postgres, sois.failure_model, ...)." ;
+    ekg:source "job.csv plus the real Project 1 and Project 2 entry points" .
+
+ekg:Query a owl:Class, skos:Concept ; skos:inScheme ekg:Glossary ;
+    skos:prefLabel "Query" ; ekg:kind "metadata" ; ekg:neo4jLabel "Query" ;
+    skos:definition "One logged SQL statement: who ran it, when, how long, how many rows, and which tables it read. Query history tells the graph which tables matter to which roles." ;
+    ekg:source "query_log.csv" ;
+    skos:altLabel "query history", "query log" .
+
+# ------------------------------------------------------------ relationships (object properties)
+ekg:HAS a owl:ObjectProperty ; rdfs:label "HAS" ; rdfs:domain ekg:Account ; rdfs:range ekg:Site ;
+    skos:definition "An account owns a site." .
+ekg:HOSTS a owl:ObjectProperty ; rdfs:label "HOSTS" ; rdfs:domain ekg:Site ; rdfs:range ekg:InstalledAsset ;
+    skos:definition "An asset is installed at a site." .
+ekg:IS_A a owl:ObjectProperty ; rdfs:label "IS_A" ; rdfs:domain ekg:InstalledAsset ; rdfs:range ekg:Product ;
+    skos:definition "An asset is a unit of a product." .
+ekg:USES a owl:ObjectProperty ; rdfs:label "USES" ; rdfs:domain ekg:Product ; rdfs:range ekg:Part ;
+    skos:definition "A product uses a part. Derived from observed dispatches: parts consumed on cases about assets of that product, with the count on the edge. No bill of materials exists in the source." .
+ekg:SUPPLIED_BY a owl:ObjectProperty ; rdfs:label "SUPPLIED_BY" ; rdfs:domain ekg:Part ; rdfs:range ekg:Supplier ;
+    skos:definition "A supplier supplies a part; lead_time_days, unit_cost_usd and preferred live on the edge." .
+ekg:ABOUT a owl:ObjectProperty ; rdfs:label "ABOUT" ; rdfs:domain ekg:Case ; rdfs:range ekg:InstalledAsset ;
+    skos:definition "A case concerns an asset." .
+ekg:RESOLVES a owl:ObjectProperty ; rdfs:label "RESOLVES" ; rdfs:domain ekg:Dispatch ; rdfs:range ekg:Case ;
+    skos:definition "A dispatch was sent to resolve a case (whatever its outcome)." .
+ekg:PERFORMS a owl:ObjectProperty ; rdfs:label "PERFORMS" ; rdfs:domain ekg:Technician ; rdfs:range ekg:Dispatch ;
+    skos:definition "A technician performs a dispatch." .
+ekg:COVERS a owl:ObjectProperty ; rdfs:label "COVERS" ; rdfs:domain ekg:Runbook ; rdfs:range ekg:Product ;
+    skos:definition "A runbook applies to the products of a family." .
+ekg:USED a owl:ObjectProperty ; rdfs:label "USED" ; rdfs:domain ekg:Dispatch ; rdfs:range ekg:Part ;
+    skos:definition "A dispatch consumed a part (quantity on the edge)." .
+ekg:OPENED_BY a owl:ObjectProperty ; rdfs:label "OPENED_BY" ; rdfs:domain ekg:Case ; rdfs:range ekg:AccountRecord ;
+    skos:definition "The CRM account record the case cites (the messy id, MESS_RULES A4); the Account is reached through SAME_AS." .
+ekg:SAME_AS a owl:ObjectProperty ; rdfs:label "SAME_AS" ;
+    skos:definition "An entity-resolution link from a source record (AccountRecord, Drive) to its canonical entity (Account, Asset), with score, method and band on the edge." .
+ekg:PRODUCED_BY a owl:ObjectProperty ; rdfs:label "PRODUCED_BY" ; rdfs:domain ekg:Table ; rdfs:range ekg:Job ;
+    skos:definition "A job writes a table or report." .
+ekg:BELONGS_TO a owl:ObjectProperty ; rdfs:label "BELONGS_TO" ; rdfs:domain ekg:Column ; rdfs:range ekg:Table ;
+    skos:definition "A column is a field of a table." .
+ekg:COMPOSED_OF a owl:ObjectProperty ; rdfs:label "COMPOSED_OF" ; rdfs:domain ekg:DataProduct ; rdfs:range ekg:Table ;
+    skos:definition "A data product bundles tables." .
+ekg:READS a owl:ObjectProperty ; rdfs:label "READS" ; rdfs:range ekg:Table ;
+    skos:definition "A query or a job reads a table." .
+ekg:MEANS a owl:ObjectProperty ; rdfs:label "MEANS" ; rdfs:domain ekg:Column ; rdfs:range skos:Concept ;
+    skos:definition "A column carries the meaning of a glossary term; this is the semantic layer's hook into the schema." .
+ekg:INSTANCE_OF a owl:ObjectProperty ; rdfs:label "INSTANCE_OF" ; rdfs:range skos:Concept ;
+    skos:definition "Every entity node links to the Term that defines its label." .

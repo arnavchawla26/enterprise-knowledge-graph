@@ -1,0 +1,69 @@
+# Neo4j 5 community (APOC + GDS), Elasticsearch 8 and Kibana 8, each capped at a
+# 1 GB JVM heap, each on a named volume. Project name is fixed to `ekg` so the
+# containers and volumes do not collide with the sibling repositories on the
+# same machine (services-ops-intelligence owns 5432; knowledge-agents-pilot
+# owns 3000-3003, 5433 and 9201).
+name: ekg
+
+services:
+  neo4j:
+    image: neo4j:5.26.0-community
+    container_name: ekg-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-ekg_local_dev_only}
+      NEO4J_PLUGINS: '["apoc","graph-data-science"]'
+      NEO4J_server_memory_heap_initial__size: 1G
+      NEO4J_server_memory_heap_max__size: 1G
+      NEO4J_server_memory_pagecache_size: 512M
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*,gds.*"
+      NEO4J_dbms_security_procedures_allowlist: "apoc.*,gds.*"
+      NEO4J_apoc_export_file_enabled: "true"
+    volumes:
+      - ekg-neo4j-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:7474 >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.4
+    container_name: ekg-elasticsearch
+    ports:
+      - "9200:9200"
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      cluster.name: ekg
+    volumes:
+      - ekg-es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.4
+    container_name: ekg-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      NODE_OPTIONS: "--max-old-space-size=1024"
+      XPACK_SECURITY_ENABLED: "false"
+      TELEMETRY_ENABLED: "false"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    volumes:
+      - ekg-kibana-data:/usr/share/kibana/data
+
+volumes:
+  ekg-neo4j-data:
+  ekg-es-data:
+  ekg-kibana-data:

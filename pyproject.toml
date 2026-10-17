@@ -1,7 +1,7 @@
 [project]
 name = "ekg"
 version = "0.1.0"
-description = "Enterprise Knowledge Graph: ontology, entity resolution, lineage, graph data science, text-to-Cypher and a data-trust dashboard over the services-ops-intelligence enterprise (Dell project 2 of 3)"
+description = "Enterprise Knowledge Graph: ontology, entity resolution, lineage, graph data science, text-to-Cypher and a data-trust dashboard over the services-ops-intelligence enterprise"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [{ name = "Arnav Chawla" }]

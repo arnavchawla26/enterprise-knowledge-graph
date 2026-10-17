@@ -1,4 +1,4 @@
-# Enterprise ontology v0 for the services-ops enterprise (Dell project 2 of 3).
+# Enterprise ontology v0 for the services-ops enterprise.
 # SKOS for the glossary (one skos:definition per term), OWL-lite for the
 # entity classes and the relationships between them. Every term carries
 # ekg:source (which Project 1 table or file defines it) and, where it is a

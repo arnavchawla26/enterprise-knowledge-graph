@@ -5,15 +5,13 @@ agent gets trusted, provenance-backed context instead of raw tables.
 
 ## Why this exists
 
-On October 6, 2026 Dell announced the next release of the Dell AI Data Platform. Three of
-its pieces are what this repository is a small working version of: an Enterprise
-Knowledge Graph built from metadata, lineage and query history, which adds the related
-tables, columns and documents to an agent's context when it asks a question; a Unified
-Semantic Layer, in which every business term has one meaning; and the idea that agents
-should receive "trusted context", scoped by permission and backed by lineage and quality
-evidence, rather than whatever a search returns. Arthur Lewis's line from the
-announcement, "In many cases, the model is not the next constraint, the data is", is the
-premise.
+The enterprise AI data platforms announced across the industry in 2026 share three pieces
+that this repository is a small working version of: an enterprise knowledge graph built from
+metadata, lineage and query history, which adds the related tables, columns and documents to
+an agent's context when it asks a question; a semantic layer in which every business term has
+one meaning; and the idea that agents should receive trusted context, scoped by permission and
+backed by lineage and quality evidence, rather than whatever a search returns. The premise
+behind all three is that the model is rarely the next constraint; the data is.
 
 This repository is the knowledge layer over the enterprise that
 [services-ops-intelligence](https://github.com/arnavchawla26/services-ops-intelligence)

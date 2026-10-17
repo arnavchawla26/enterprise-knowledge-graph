@@ -1,0 +1,9 @@
+account_row_id,account_id,account_name,industry,region,source_system
+1,ACC-00001,Westgate Retail Holdings,Transportation,APJ,crm_cloud
+2,ACC-00002,Northwind Capital LLC,Manufacturing,AMER-East,crm_cloud
+3,ACC-00003,Stonefield Aerospace Inc,Energy,AMER-East,crm_cloud
+4,ACC-00901,"Westgate Retail, Inc.",Transportation,APJ,legacy_crm
+5,ACC-00001,WESTGATE RETAIL,Transportation,APJ,legacy_crm
+6,ACC-00902,Northwind  Capital,Manufacturing,AMER-East,legacy_crm
+7,ACC-00002,Northwind Cap. Holdings,Manufacturing,AMER-East,legacy_crm
+8,ACC-00004,Northwind Media GmbH,Media,EMEA,crm_cloud

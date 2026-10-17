@@ -1,0 +1,4 @@
+part_id,supplier_id,lead_time_days,unit_cost_usd,preferred
+PRT-0001,SUP-01,39,67.38,True
+PRT-0001,SUP-02,19,70.56,False
+PRT-0002,SUP-02,7,80.00,True

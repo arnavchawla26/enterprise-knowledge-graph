@@ -1,0 +1,5 @@
+case_id,opened_at_iso,closed_at_iso,canonical_account_id,telemetry_serial,linked_to_telemetry_failure,telemetry_failure_date,true_hardware_fault,deflectable,deflect_reason,matching_runbook_id
+CS-0000001,2026-03-15T18:48:32,2026-03-31T16:40:02,ACC-00001,ZA1000AB,True,2026-03-14,True,False,needs_human,
+CS-0000002,2026-03-17T03:29:32,2026-03-19T15:28:38,ACC-00002,ZA1000AC,False,,False,True,runbook_match,RB-001
+CS-0000003,2026-04-01T10:00:00,,ACC-00003,ZA1000AE,False,,False,False,needs_human,
+CS-0000004,2026-04-02T10:00:00,2026-04-03T10:00:00,ACC-00001,ZA1000AA,False,,False,True,false_alarm,

@@ -1,0 +1,3 @@
+runbook_id,title,product_family,category,symptoms,steps
+RB-001,Expand a volume,Storage Array,how_to,how do I expand a volume; grow LUN; add capacity to volume,"1. Open Storage > Volumes. 2. Select volume, Expand."
+RB-002,Find the alert log,Rack Server,how_to,where is the alert log; view alerts; event log,1. Management console > Maintenance > System Event Log.

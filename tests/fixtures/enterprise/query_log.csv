@@ -1,0 +1,4 @@
+query_id,ran_at,user_name,sql_text,tables,duration_ms,rows_returned
+Q-00001,2026-04-01T00:51:32,ops_lead,"SELECT part_id, on_hand FROM inventory WHERE depot_id = 'DEPOT-AMER-East'",inventory,248,3124
+Q-00002,2026-04-02T08:16:15,agent_triage,SELECT count(*) FROM telemetry_drive_summary WHERE failed = 1,telemetry_drive_summary,429,1
+Q-00003,2026-04-02T09:16:15,analyst_01,"SELECT c.category, count(*) FROM ""case"" c JOIN installed_asset a USING (asset_id) GROUP BY 1",case;installed_asset,900,7

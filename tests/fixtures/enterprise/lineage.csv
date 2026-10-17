@@ -1,0 +1,5 @@
+job_id,input_table,output_table
+JOB-001,backblaze_daily_csv,telemetry_daily
+JOB-001,telemetry_daily,telemetry_drive_summary
+JOB-002,telemetry_drive_summary,installed_asset
+JOB-002,installed_asset,case

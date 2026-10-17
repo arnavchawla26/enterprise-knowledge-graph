@@ -1,0 +1,5 @@
+case_id,opened_at,closed_at,account_id,asset_id,category,severity,description,resolution_code,resolution_text,failure_reported,source_system
+CS-0000001,03/15/2026 18:48,03/31/2026 16:40,ACC-00901,AST-0000002,drive_failure,1,Storage Array: drive failed.,hardware_replaced,Replaced drive.,1,legacy_crm
+CS-0000002,2026-03-17T03:29:32,2026-03-19T15:28:38,ACC-00002,AST-0000003,how_to,4,how do I expand a volume,resolved_remote,Walked customer through it.,0,svc_cloud
+CS-0000003,2026-04-01T10:00:00,,ACC-00003,AST-0000005,predictive_alert,2,SMART pending sector count rising.,pending,,0,svc_cloud
+CS-0000004,2026-04-02T10:00:00,2026-04-03T10:00:00,ACC-00001,AST-0000001,false_alarm,3,Fan alarm cleared.,no_fault_found,Nothing found.,0,svc_cloud

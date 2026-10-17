@@ -1,0 +1,3 @@
+product_id,product_name,family,drive_bays,list_price_usd,capacity_class
+PRD-RS110,RS-110 Rack Server,Rack Server,8,9800,small
+PRD-SA300,SA-300 Storage Array,Storage Array,24,41000,mid

@@ -1,0 +1,3 @@
+data_product_id,name,owner,description,freshness_sla_hours,tables
+DP-001,fleet_health,services_ops_ds,Per-drive and per-site health from telemetry,24,telemetry_drive_summary;drive_model;installed_asset;site
+DP-002,parts_demand,supply_chain_analytics,Parts used in dispatches by region and month,168,dispatch;dispatch_part;part;inventory;site

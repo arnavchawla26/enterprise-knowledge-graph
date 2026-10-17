@@ -1,0 +1,5 @@
+site_id,account_id,site_name,address,city,state,region
+SITE-00001,ACC-00001,Westgate Retail Singapore,8049 Enterprise Ave,Singapore,SG,APJ
+SITE-00002,ACC-00002,Northwind Capital Boston,12 Main St,Boston,MA,AMER-East
+SITE-00003,ACC-00003,Stonefield Aerospace Austin,9 Rocket Rd,Austin,TX,AMER-West
+SITE-00004,ACC-00004,Northwind Media Berlin,1 Strasse,Berlin,DE,EMEA

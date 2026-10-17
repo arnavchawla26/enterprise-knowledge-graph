@@ -1,0 +1,4 @@
+dispatch_id,case_id,technician_id,scheduled_at,visit_number,outcome,parts_used
+DSP-0000001,CS-0000001,TEC-0001,2026-03-17T04:06:02,1,parts_not_available,
+DSP-0000002,CS-0000001,TEC-0001,2026-03-20T04:06:02,2,resolved,PRT-0001;PRT-0002
+DSP-0000003,CS-0000004,TEC-0002,2026-04-02T15:00:00,1,no_fault_found,

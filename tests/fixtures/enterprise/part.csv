@@ -1,0 +1,3 @@
+part_id,part_number,description,category,unit_cost_usd
+PRT-0001,HDD-SLED-04T,4TB SATA HDD in sled,drive,95
+PRT-0002,PSU-800,800W power supply,psu,120

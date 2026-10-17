@@ -1,0 +1,9 @@
+account_id,account_name,canonical_account_id,variant_type
+ACC-00001,Westgate Retail Holdings,ACC-00001,canonical
+ACC-00002,Northwind Capital LLC,ACC-00002,canonical
+ACC-00003,Stonefield Aerospace Inc,ACC-00003,canonical
+ACC-00901,"Westgate Retail, Inc.",ACC-00001,duplicate_id
+ACC-00001,WESTGATE RETAIL,ACC-00001,duplicate_row
+ACC-00902,Northwind  Capital,ACC-00002,duplicate_id
+ACC-00002,Northwind Cap. Holdings,ACC-00002,duplicate_row
+ACC-00004,Northwind Media GmbH,ACC-00004,canonical

@@ -1,0 +1,213 @@
+# The real pipeline behind the graph, declared by hand from reading the source
+# of services-ops-intelligence (Project 1) and this repository. It is not
+# extracted automatically; tests/test_lineage.py checks that every file a job is
+# declared to read or write is named in that job's source module, so a stale
+# declaration fails the suite. Generated metadata (data_product.csv, job.csv,
+# lineage.csv, query_log.csv) is loaded alongside and marked source=generated.
+#
+# Dataset naming: lake datasets (CSV, Parquet, reports) by their bare name or
+# path; the Postgres copies are prefixed `pg.` because load_postgres produces
+# them from the lake files and a data product is served from the warehouse.
+
+datasets:
+  # raw and lake
+  backblaze_daily_csv:   {kind: raw_csv,  path: data/raw/data_Q2_2026, source: real, note: "Backblaze Hard Drive Data 2026 Q2, one CSV per day"}
+  telemetry_daily:       {kind: parquet,  path: data/parquet/telemetry_daily, source: real}
+  drive_summary:         {kind: parquet,  path: data/parquet/drive_summary.parquet, source: real_derived}
+  drive_model:           {kind: parquet,  path: data/parquet/drive_model.parquet, source: real_derived}
+  load_summary:          {kind: json,     path: data/parquet/load_summary.json, source: real_derived}
+  account:               {kind: csv, path: data/enterprise/account.csv, source: generated}
+  site:                  {kind: csv, path: data/enterprise/site.csv, source: generated}
+  contact:               {kind: csv, path: data/enterprise/contact.csv, source: generated, pii: true}
+  product:               {kind: csv, path: data/enterprise/product.csv, source: generated}
+  order:                 {kind: csv, path: data/enterprise/order.csv, source: generated}
+  order_line:            {kind: csv, path: data/enterprise/order_line.csv, source: generated}
+  installed_asset:       {kind: csv, path: data/enterprise/installed_asset.csv, source: generated_joined_to_real}
+  part:                  {kind: csv, path: data/enterprise/part.csv, source: generated}
+  supplier:              {kind: csv, path: data/enterprise/supplier.csv, source: generated}
+  part_supplier:         {kind: csv, path: data/enterprise/part_supplier.csv, source: generated}
+  inventory:             {kind: csv, path: data/enterprise/inventory.csv, source: generated}
+  technician:            {kind: csv, path: data/enterprise/technician.csv, source: generated}
+  runbook:               {kind: csv, path: data/enterprise/runbook.csv, source: generated}
+  case:                  {kind: csv, path: data/enterprise/case.csv, source: generated_timed_by_real}
+  dispatch:              {kind: csv, path: data/enterprise/dispatch.csv, source: generated}
+  dispatch_part:         {kind: csv, path: data/enterprise/dispatch_part.csv, source: generated}
+  data_product:          {kind: csv, path: data/enterprise/data_product.csv, source: generated}
+  job:                   {kind: csv, path: data/enterprise/job.csv, source: generated}
+  lineage:               {kind: csv, path: data/enterprise/lineage.csv, source: generated}
+  query_log:             {kind: csv, path: data/enterprise/query_log.csv, source: generated}
+  truth/account_resolution: {kind: csv, path: truth/account_resolution.csv, source: truth}
+  truth/asset_serial_map:   {kind: csv, path: truth/asset_serial_map.csv, source: truth}
+  truth/case_truth:         {kind: csv, path: truth/case_truth.csv, source: truth}
+  truth/dispatch_truth:     {kind: csv, path: truth/dispatch_truth.csv, source: truth}
+  truth/generator_manifest: {kind: json, path: truth/generator_manifest.json, source: truth}
+  # Project 1 reports and models (the numbers a reader quotes)
+  reports/failure_model_metrics.json: {kind: report, path: reports/failure_model_metrics.json}
+  reports/dispatch_budget.csv:        {kind: report, path: reports/dispatch_budget.csv}
+  reports/dispatch_budget_curve.csv:  {kind: report, path: reports/dispatch_budget_curve.csv}
+  reports/dispatch_budget.png:        {kind: figure, path: reports/dispatch_budget.png}
+  reports/reliability.csv:            {kind: report, path: reports/reliability.csv}
+  reports/fleet_risk_top100.csv:      {kind: report, path: reports/fleet_risk_top100.csv}
+  reports/fleet_risk_sites.csv:       {kind: report, path: reports/fleet_risk_sites.csv}
+  reports/fleet_risk_vaults.csv:      {kind: report, path: reports/fleet_risk_vaults.csv}
+  models/test_scores.parquet:         {kind: model_output, path: models/test_scores.parquet, gitignored: true}
+  models/failure_model_bundle.pkl:    {kind: model, path: models/failure_model_bundle.pkl, gitignored: true}
+  models/lightgbm.txt:                {kind: model, path: models/lightgbm.txt, gitignored: true}
+  reports/parts_forecast_backtest.csv: {kind: report, path: reports/parts_forecast_backtest.csv}
+  reports/parts_forecast_detail.csv:   {kind: report, path: reports/parts_forecast_detail.csv}
+  reports/parts_forecast_summary.json: {kind: report, path: reports/parts_forecast_summary.json}
+  reports/parts_weekly_demand.csv:     {kind: report, path: reports/parts_weekly_demand.csv}
+  reports/parts_forecast.png:          {kind: figure, path: reports/parts_forecast.png}
+  reports/repeat_dispatch.csv:         {kind: report, path: reports/repeat_dispatch.csv}
+  reports/repeat_dispatch_summary.json: {kind: report, path: reports/repeat_dispatch_summary.json}
+  reports/repeat_dispatch.png:         {kind: figure, path: reports/repeat_dispatch.png}
+  reports/dashboard.png:               {kind: figure, path: reports/dashboard.png}
+  # Project 2 outputs
+  ekg/graph:                           {kind: neo4j, path: "bolt://localhost:7687", repo: enterprise-knowledge-graph}
+  ekg/reports/resolution_metrics.json: {kind: report, path: reports/resolution_metrics.json, repo: enterprise-knowledge-graph}
+  ekg/reports/uncertain_matches.csv:   {kind: report, path: reports/uncertain_matches.csv, repo: enterprise-knowledge-graph}
+  ekg/reports/asset_embeddings.parquet: {kind: model_output, path: reports/asset_embeddings.parquet, repo: enterprise-knowledge-graph, gitignored: true}
+  ekg/reports/gds_lift.json:           {kind: report, path: reports/gds_lift.json, repo: enterprise-knowledge-graph}
+  ekg/es/ekg-trust:                    {kind: elasticsearch_index, path: "http://localhost:9200/ekg-trust", repo: enterprise-knowledge-graph}
+
+# Postgres copies: one `pg.<name>` dataset per table in sql/schema.sql; columns come from information_schema at load time.
+warehouse_tables: [drive_model, telemetry_drive_summary, telemetry_daily_recent, account, site, contact, product, order, installed_asset,
+                   order_line, part, supplier, part_supplier, inventory, technician, runbook, case, dispatch, dispatch_part,
+                   data_product, job, lineage, query_log]
+
+jobs:
+  - job_id: JOB-001
+    name: load_telemetry
+    entrypoint: sois.load_telemetry
+    repo: services-ops-intelligence
+    module: src/sois/load_telemetry.py
+    schedule: daily 02:00
+    reads: [backblaze_daily_csv]
+    writes: [telemetry_daily, drive_summary, drive_model, load_summary]
+  - job_id: JOB-002
+    name: generate_enterprise
+    entrypoint: sois.generate_enterprise
+    repo: services-ops-intelligence
+    module: src/sois/generate_enterprise.py
+    schedule: on demand
+    reads: [drive_summary, drive_model]
+    writes: [account, site, contact, product, order, order_line, installed_asset, part, supplier, part_supplier, inventory,
+             technician, runbook, case, dispatch, dispatch_part, data_product, job, lineage, query_log,
+             truth/account_resolution, truth/asset_serial_map, truth/case_truth, truth/dispatch_truth, truth/generator_manifest]
+  - job_id: JOB-003
+    name: load_postgres
+    entrypoint: sois.load_postgres
+    repo: services-ops-intelligence
+    module: src/sois/load_postgres.py
+    schedule: daily 03:00
+    reads: [telemetry_daily, drive_summary, drive_model, account, site, contact, product, order, order_line, installed_asset, part,
+            supplier, part_supplier, inventory, technician, runbook, case, dispatch, dispatch_part, data_product, job, lineage, query_log]
+    writes_warehouse: true     # every pg.* dataset
+  - job_id: JOB-005
+    name: failure_model
+    entrypoint: sois.failure_model
+    repo: services-ops-intelligence
+    module: src/sois/failure_model.py
+    schedule: on demand (make models)
+    reads: [telemetry_daily, drive_summary, drive_model, installed_asset, site, truth/asset_serial_map, truth/account_resolution]
+    writes: [reports/failure_model_metrics.json, reports/dispatch_budget.csv, reports/dispatch_budget_curve.csv, reports/dispatch_budget.png,
+             reports/reliability.csv, reports/fleet_risk_top100.csv, reports/fleet_risk_sites.csv, reports/fleet_risk_vaults.csv,
+             models/test_scores.parquet, models/failure_model_bundle.pkl, models/lightgbm.txt]
+  - job_id: JOB-006
+    name: parts_forecast
+    entrypoint: sois.parts_forecast
+    repo: services-ops-intelligence
+    module: src/sois/parts_forecast.py
+    schedule: on demand (make parts)
+    reads: [case, dispatch, dispatch_part, installed_asset, site]
+    writes: [reports/parts_forecast_backtest.csv, reports/parts_forecast_detail.csv, reports/parts_forecast_summary.json,
+             reports/parts_weekly_demand.csv, reports/parts_forecast.png]
+  - job_id: JOB-007
+    name: repeat_dispatch
+    entrypoint: sois.repeat_dispatch
+    repo: services-ops-intelligence
+    module: src/sois/repeat_dispatch.py
+    schedule: on demand (make repeat)
+    reads: [case, dispatch, dispatch_part, installed_asset, part_supplier, product, site, supplier, technician, truth/dispatch_truth]
+    writes: [reports/repeat_dispatch.csv, reports/repeat_dispatch_summary.json, reports/repeat_dispatch.png]
+  - job_id: JOB-008
+    name: dashboard
+    entrypoint: app/dashboard.py
+    repo: services-ops-intelligence
+    module: app/dashboard.py
+    schedule: on demand (make dashboard)
+    reads: [reports/failure_model_metrics.json, reports/dispatch_budget.csv, reports/dispatch_budget_curve.csv, reports/reliability.csv,
+            reports/fleet_risk_sites.csv, reports/fleet_risk_vaults.csv, reports/parts_forecast_backtest.csv, reports/parts_forecast_detail.csv,
+            reports/parts_forecast_summary.json, reports/parts_weekly_demand.csv, reports/repeat_dispatch.csv, reports/repeat_dispatch_summary.json]
+    writes: [reports/dashboard.png]
+  - job_id: EKG-001
+    name: ekg.load
+    entrypoint: ekg.load
+    repo: enterprise-knowledge-graph
+    module: src/ekg/load.py
+    schedule: on demand (make load)
+    reads: [account, site, installed_asset, product, part, supplier, part_supplier, case, dispatch, dispatch_part, technician, runbook,
+            drive_summary, drive_model, telemetry_daily, models/test_scores.parquet, reports/fleet_risk_top100.csv, truth/case_truth]
+    writes: [ekg/graph]
+  - job_id: EKG-002
+    name: ekg.resolve
+    entrypoint: ekg.resolve
+    repo: enterprise-knowledge-graph
+    module: src/ekg/resolve.py
+    schedule: on demand (make resolve)
+    reads: [account, site, contact, installed_asset, drive_summary, truth/account_resolution, truth/asset_serial_map]
+    writes: [ekg/graph, ekg/reports/resolution_metrics.json, ekg/reports/uncertain_matches.csv]
+  - job_id: EKG-003
+    name: ekg.gds
+    entrypoint: ekg.gds
+    repo: enterprise-knowledge-graph
+    module: src/ekg/gds.py
+    schedule: on demand (make gds)
+    reads: [ekg/graph, telemetry_daily, drive_summary, drive_model]
+    writes: [ekg/reports/asset_embeddings.parquet, ekg/reports/gds_lift.json]
+  - job_id: EKG-004
+    name: ekg.trust
+    entrypoint: ekg.trust
+    repo: enterprise-knowledge-graph
+    module: src/ekg/trust.py
+    schedule: on demand (make trust)
+    reads: [installed_asset, site, drive_summary, drive_model, dispatch, dispatch_part, part, inventory, case, product]
+    writes: [ekg/es/ekg-trust]
+
+# The semantic layer's hook into the schema: which column carries which term.
+# Applied to the lake dataset and to its pg.* copy when one exists.
+column_meanings:
+  telemetry_daily.failure: TelemetryFailure
+  telemetry_daily_recent.failure: TelemetryFailure
+  drive_summary.failed: TelemetryFailure
+  drive_summary.failure_date: TelemetryFailure
+  telemetry_drive_summary.failed: TelemetryFailure
+  telemetry_drive_summary.failure_date: TelemetryFailure
+  case.failure_reported: ServiceFailure
+  dispatch.visit_number: RepeatDispatch
+  truth/dispatch_truth.is_repeat: RepeatDispatch
+  truth/case_truth.deflectable: DeflectableCase
+  installed_asset.warranty_end: WarrantyStatus
+  part_supplier.lead_time_days: PartsLeadTime
+  reports/fleet_risk_sites.csv.expected_failures_30d: FleetHealth
+  reports/fleet_risk_vaults.csv.expected_failures_30d: FleetHealth
+  reports/fleet_risk_top100.csv.p_fail_30d: FleetHealth
+  models/test_scores.parquet.lightgbm: FleetHealth
+
+# Which dataset stores each entity term (Term-STORED_IN->Table)
+term_tables:
+  Account: [account, truth/account_resolution]
+  AccountRecord: [account]
+  Site: [site]
+  InstalledAsset: [installed_asset]
+  Drive: [drive_summary, telemetry_daily]
+  Product: [product]
+  Part: [part, dispatch_part]
+  Supplier: [supplier, part_supplier]
+  Case: [case]
+  Dispatch: [dispatch, dispatch_part]
+  Technician: [technician]
+  Runbook: [runbook]
+  DataProduct: [data_product]
+  Job: [job]
+  Query: [query_log]

@@ -24,11 +24,14 @@ Canonical record of a cluster: the crm_cloud row with the fewest mess markers
 on ties; its account_id becomes Account.account_id.
 
 Assets. The ERP serial is the telemetry serial with, sometimes, a vendor prefix
-(rule S1) or lowercase (rule S2). normalize_serial inverts both; a Drive whose
-serial equals an Asset's normalized serial is SAME_AS it with score 1.0
-(method exact) or 0.95 (method normalized). There is no grey band because the
-rule is deterministic; this is a normalization, not a learned matcher, and the
-metrics say so.
+(rule S1) or lowercase (rule S2). A blind "strip and upper-case" rule is wrong
+on this data: 430 real telemetry serials are natively lowercase and 86 start
+with a real "WD-". So the matcher tries candidates in order (raw, prefix
+stripped, upper-cased, both) against the set of known telemetry serials and
+takes the first hit, scored 1.0 / 0.95 / 0.95 / 0.9 by how much it had to
+change; a candidate already claimed by another asset is a collision and goes
+to the report instead of the graph. This is a rule matcher checked against
+the data, not a learned one, and the metrics say so.
 
 Measurement. Companies are split 50/50 by a hash of their true canonical id;
 thresholds were chosen on the dev half and every number in
@@ -52,7 +55,7 @@ from pathlib import Path
 import pandas as pd
 from rapidfuzz.distance import JaroWinkler
 
-from ekg.load import normalize_name, normalize_serial
+from ekg.load import _PREFIX_RE, normalize_name, normalize_serial  # noqa: PLC2701
 
 MATCH = 0.85
 GREY = 0.70
@@ -172,15 +175,40 @@ def resolve_accounts(records: list[dict], match: float = MATCH, grey: float = GR
 
 
 # ---------------------------------------------------------------- assets
+def serial_candidates(erp_serial: str) -> list[tuple[str, str, float]]:
+    """(candidate, method, score) in the order tried. Real telemetry serials can be lowercase
+    (430 of them in 2026 Q2) or start with 'WD-' (86), so the raw serial is tried first and each
+    transformation is a separate, lower-scored step rather than a blind normalization."""
+    raw = str(erp_serial).strip()
+    stripped = _PREFIX_RE.sub("", raw)
+    out = [(raw, "exact", 1.0)]
+    if stripped != raw:
+        out.append((stripped, "prefix_stripped", 0.95))
+    if raw.upper() != raw:
+        out.append((raw.upper(), "uppercased", 0.95))
+    if stripped != raw and stripped.upper() != stripped:
+        out.append((stripped.upper(), "prefix_stripped_uppercased", 0.9))
+    return out
+
+
 def resolve_assets(assets: pd.DataFrame, drive_serials: pd.Series) -> pd.DataFrame:
-    """One row per matched (asset_id, serial_number) with score and method. assets has asset_id, erp_serial."""
-    a = assets[["asset_id", "erp_serial"]].copy()
-    a["serial_norm"] = a["erp_serial"].map(normalize_serial)
-    d = pd.DataFrame({"serial_number": drive_serials.astype(str)})
-    m = a.merge(d, left_on="serial_norm", right_on="serial_number", how="inner")
-    m["method"] = (m["erp_serial"] == m["serial_number"]).map({True: "exact", False: "normalized"})
-    m["score"] = m["method"].map({"exact": 1.0, "normalized": 0.95})
-    return m[["asset_id", "erp_serial", "serial_number", "method", "score"]]
+    """One row per matched (asset_id, serial_number) with score and method; the first candidate
+    that is a known telemetry serial wins. An asset whose winning serial is already claimed by an
+    earlier asset is reported with band 'collision' and is not linked. assets has asset_id, erp_serial."""
+    known = set(drive_serials.astype(str))
+    claimed: dict[str, str] = {}
+    rows = []
+    for a in assets.itertuples():
+        hit = next(((c, m, sc) for c, m, sc in serial_candidates(a.erp_serial) if c in known), None)
+        if hit is None:
+            continue
+        serial, method, score = hit
+        if serial in claimed:
+            rows.append({"asset_id": a.asset_id, "erp_serial": a.erp_serial, "serial_number": serial, "method": method, "score": score, "band": "collision"})
+            continue
+        claimed[serial] = a.asset_id
+        rows.append({"asset_id": a.asset_id, "erp_serial": a.erp_serial, "serial_number": serial, "method": method, "score": score, "band": "match"})
+    return pd.DataFrame(rows, columns=["asset_id", "erp_serial", "serial_number", "method", "score", "band"])
 
 
 # ---------------------------------------------------------------- measurement
@@ -238,12 +266,14 @@ def measure_accounts(res: AccountResolution, records: list[dict], truth: pd.Data
 
 def measure_assets(matches: pd.DataFrame, assets: pd.DataFrame, truth_map: pd.DataFrame) -> dict:
     t = truth_map[["asset_id", "telemetry_serial", "serial_mess"]]
+    collisions = int((matches["band"] == "collision").sum()) if "band" in matches else 0
+    matches = matches[matches["band"] == "match"] if "band" in matches else matches
     m = matches.merge(t, on="asset_id", how="outer", indicator=True)
     correct = (m["serial_number"] == m["telemetry_serial"]).sum()
     predicted = m["serial_number"].notna().sum()
     out = {"assets": int(len(assets)), "matched": int(predicted), "correct": int(correct),
            "precision": round(float(correct / predicted), 6) if predicted else None,
-           "recall": round(float(correct / len(t)), 6), "unmatched_assets": int(len(t) - predicted),
+           "recall": round(float(correct / len(t)), 6), "unmatched_assets": int(len(t) - predicted), "collisions": collisions,
            "by_mess": {}}
     for mess, g in m.groupby("serial_mess"):
         out["by_mess"][str(mess)] = {"n": int(len(g)), "correct": int((g["serial_number"] == g["telemetry_serial"]).sum())}
@@ -310,7 +340,7 @@ def write_accounts(session, res: AccountResolution, records: list[dict]) -> int:
 
 
 def write_assets(session, matches: pd.DataFrame) -> int:
-    rows = matches[["asset_id", "serial_number", "method", "score"]].to_dict(orient="records")
+    rows = matches[matches["band"] == "match"][["asset_id", "serial_number", "method", "score"]].to_dict(orient="records")
     for i in range(0, len(rows), 5000):
         session.run(WRITE_ASSET_LINKS, rows=rows[i:i + 5000]).consume()
     return len(rows)

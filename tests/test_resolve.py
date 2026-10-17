@@ -65,7 +65,18 @@ def test_asset_resolution_inverts_s1_s2_and_is_measured():
     assets = pd.read_csv(FIX / "enterprise" / "installed_asset.csv", dtype=str).rename(columns={"serial_number": "erp_serial"})
     drives = pd.Series(["ZA1000AA", "ZA1000AB", "ZA1000AC", "ZA1000AD", "ZA1000AE", "ZA1000AF", "ZZ9999ZZ"])
     m = resolve.resolve_assets(assets, drives)
-    assert len(m) == 6 and set(m["method"]) == {"exact", "normalized"}
+    assert len(m) == 6 and set(m["method"]) == {"exact", "prefix_stripped", "uppercased", "prefix_stripped_uppercased"}
     truth = pd.read_csv(FIX / "truth" / "asset_serial_map.csv", dtype=str)
     met = resolve.measure_assets(m, assets, truth)
     assert met["precision"] == 1.0 and met["recall"] == 1.0 and met["by_mess"]["vendor_prefix"]["correct"] == 2
+
+
+def test_asset_matcher_respects_real_lowercase_and_real_wd_prefix():
+    assets = pd.DataFrame({"asset_id": ["A1", "A2", "A3", "A4"], "erp_serial": ["00ab12", "WD-WMC100", "SG-00ab12", "WD-WMC100"]})
+    drives = pd.Series(["00ab12", "WD-WMC100", "00AB12"])
+    m = resolve.resolve_assets(assets, drives)
+    by = {r.asset_id: r for r in m.itertuples()}
+    assert by["A1"].serial_number == "00ab12" and by["A1"].method == "exact", "a natively lowercase serial is not upper-cased"
+    assert by["A2"].serial_number == "WD-WMC100" and by["A2"].method == "exact", "a real WD- prefix is not stripped"
+    assert by["A3"].serial_number == "00ab12" and by["A3"].method == "prefix_stripped"
+    assert by["A4"].band == "collision", "a serial already claimed is reported, not linked twice"

@@ -1,0 +1,25 @@
+row_id_a,row_id_b,account_id_a,account_id_b,name_a,name_b,block,band,score,jw,tokens,same_industry,same_region,same_id
+142,143,ACC-00263,ACC-00264,Maplewood Anal. plc,Maplewood Anlytcs plc,AMER-West|map,uncertain,0.8224,0.9387,0.5,1.0,1.0,0.0
+195,281,ACC-00141,ACC-00199,Cedarbrook Mutual plc,Cedarbrook Retail Holdings,AMER-West|ced,uncertain,0.8182,0.9294,0.5,1.0,1.0,0.0
+175,191,ACC-00127,ACC-00139,Lakeshore Health Holdings,Lakeshore Mutual Holdings,AMER-East|lak,uncertain,0.8093,0.9096,0.5,1.0,1.0,0.0
+213,227,ACC-00279,ACC-00161,"Fairmont Media, Holdings.",Fairmont Health GmbH,EMEA|fai,uncertain,0.8067,0.9038,0.5,1.0,1.0,0.0
+211,227,ACC-00151,ACC-00161,Fairmont Media Holdings,Fairmont Health GmbH,EMEA|fai,uncertain,0.8067,0.9038,0.5,1.0,1.0,0.0
+179,201,ACC-00129,ACC-00145,Greystone Health Inc,Greystone Pharma Inc,AMER-East|gre,uncertain,0.805,0.9,0.5,1.0,1.0,0.0
+159,301,ACC-00115,ACC-00217,Hollowbrook Systems GmbH,Hollowbrook Foods Inc,EMEA|hol,uncertain,0.8004,0.8898,0.5,1.0,1.0,0.0
+212,227,ACC-00151,ACC-00161,Fairmont Medi. Holdings,Fairmont Health GmbH,EMEA|fai,uncertain,0.7992,0.8872,0.5,1.0,1.0,0.0
+5,172,ACC-00005,ACC-00124,Northwind Foods Holdings,Northwind Aerospace GmbH,APJ|nor,uncertain,0.7988,0.8863,0.5,1.0,1.0,0.0
+33,64,ACC-00023,ACC-00042,Maplewood Media GmbH,Maplewood Systems Corp,AMER-West|map,uncertain,0.798,0.8845,0.5,1.0,1.0,0.0
+136,311,ACC-00098,ACC-00225,Copperfield Media Ltd,Copperfield Aerospace GmbH,AMER-West|cop,uncertain,0.7977,0.8838,0.5,1.0,1.0,0.0
+157,243,ACC-00113,ACC-00173,Clearview Pharma Ltd,Clearview Analytics plc,EMEA|cle,uncertain,0.7943,0.8763,0.5,1.0,1.0,0.0
+157,244,ACC-00113,ACC-00173,Clearview Pharma Ltd,The Clearview Analytics,EMEA|cle,uncertain,0.7943,0.8763,0.5,1.0,1.0,0.0
+157,245,ACC-00113,ACC-00173,Clearview Pharma Ltd,"Clearview Analytics, plc.",EMEA|cle,uncertain,0.7943,0.8763,0.5,1.0,1.0,0.0
+25,326,ACC-00017,ACC-00234,Goldcrest Analytics Corp,Goldcrest Foods GmbH,AMER-East|gol,uncertain,0.7881,0.8625,0.5,1.0,1.0,0.0
+14,65,ACC-00242,ACC-00043,The Silverline Capital,Silverline Foods Inc,AMER-East|sil,uncertain,0.7869,0.8597,0.5,1.0,1.0,0.0
+13,65,ACC-00241,ACC-00043,Silverline Capital plc,Silverline Foods Inc,AMER-East|sil,uncertain,0.7869,0.8597,0.5,1.0,1.0,0.0
+12,65,ACC-00010,ACC-00043,Silverline Capital plc,Silverline Foods Inc,AMER-East|sil,uncertain,0.7869,0.8597,0.5,1.0,1.0,0.0
+107,241,ACC-00075,ACC-00171,Dunmore Foods Holdings,Dunmore Systems Holdings,AMER-East|dun,uncertain,0.7863,0.8585,0.5,1.0,1.0,0.0
+121,181,ACC-00087,ACC-00131,Dunmore Energy Inc,Dunmore Pharma Holdings,AMER-East|dun,uncertain,0.7857,0.8571,0.5,1.0,1.0,0.0
+23,218,ACC-00244,ACC-00154,The Redwood Systems,Redwood Health LLC,EMEA|red,uncertain,0.7853,0.8562,0.5,1.0,1.0,0.0
+22,218,ACC-00015,ACC-00154,REDWOOD SYSTEMS,Redwood Health LLC,EMEA|red,uncertain,0.7853,0.8562,0.5,1.0,1.0,0.0
+21,218,ACC-00015,ACC-00154,Redwood Systems LLC,Redwood Health LLC,EMEA|red,uncertain,0.7853,0.8562,0.5,1.0,1.0,0.0
+7,24,ACC-00007,ACC-00016,Beacon Logistics Ltd,Beacon Media Corp,EMEA|bea,uncertain,0.775,0.8333,0.5,1.0,1.0,0.0

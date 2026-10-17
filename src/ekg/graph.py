@@ -87,18 +87,21 @@ def write_edges(session, src_label: str, src_key: str, rel: str, dst_label: str,
 
 
 def link_instances(session, label: str, term_id: str) -> int:
-    """(:label)-[:INSTANCE_OF]->(:Term) for every node of the label, in transactions of 10k."""
-    r = session.run(
-        f"MATCH (t:Term {{term_id: $term_id}}) "
-        f"CALL (t) {{ MATCH (n:{label}) WHERE NOT (n)-[:INSTANCE_OF]->(t) MERGE (n)-[:INSTANCE_OF]->(t) }} IN TRANSACTIONS OF 10000 ROWS "
-        f"RETURN 1 AS ok", term_id=term_id)
-    r.consume()
+    """(:label)-[:INSTANCE_OF]->(:Term) for every node of the label, 5000 nodes per transaction (apoc)."""
+    session.run(
+        "CALL apoc.periodic.iterate("
+        f"'MATCH (n:{label}) WHERE NOT (n)-[:INSTANCE_OF]->(:Term) RETURN n', "
+        "'MATCH (t:Term {term_id: $term_id}) MERGE (n)-[:INSTANCE_OF]->(t)', "
+        "{batchSize: 5000, parallel: false, params: {term_id: $term_id}}) YIELD batches, failedBatches RETURN batches, failedBatches",
+        term_id=term_id).consume()
     return session.run(f"MATCH (:{label})-[r:INSTANCE_OF]->(:Term {{term_id: $term_id}}) RETURN count(r) AS n",
                        term_id=term_id).single()["n"]
 
 
 def wipe(session) -> None:
-    session.run("MATCH (n) CALL (n) { DETACH DELETE n } IN TRANSACTIONS OF 20000 ROWS").consume()
+    # relationships first, then nodes, in small batches: the 1 GB heap cannot hold a 20k-node DETACH DELETE
+    session.run("CALL apoc.periodic.iterate('MATCH ()-[r]->() RETURN r', 'DELETE r', {batchSize: 5000, parallel: false})").consume()
+    session.run("CALL apoc.periodic.iterate('MATCH (n) RETURN n', 'DELETE n', {batchSize: 5000, parallel: false})").consume()
     for row in session.run("SHOW CONSTRAINTS YIELD name").data():
         session.run(f"DROP CONSTRAINT {row['name']} IF EXISTS")
     for row in session.run("SHOW INDEXES YIELD name, type WHERE type <> 'LOOKUP'").data():

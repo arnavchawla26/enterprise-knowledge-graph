@@ -1,0 +1,19 @@
+{
+  "Table": 80,
+  "Column": 509,
+  "Job": 12,
+  "DataProduct": 3,
+  "Query": 300,
+  "BELONGS_TO": 509,
+  "READS(job)": 107,
+  "PRODUCED_BY": 81,
+  "COMPOSED_OF": 14,
+  "READS(query)": 520,
+  "MEANS": 20,
+  "STORED_IN": 37,
+  "INSTANCE_OF:Table": 80,
+  "INSTANCE_OF:Column": 509,
+  "INSTANCE_OF:DataProduct": 3,
+  "INSTANCE_OF:Job": 12,
+  "INSTANCE_OF:Query": 300
+}

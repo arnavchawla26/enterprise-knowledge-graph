@@ -1,11 +1,11 @@
 """Load the enterprise into Neo4j.
 
-    uv run python -m ekg.load [--reset] [--limit-assets N] [--no-postgres]
+    uv run python -m ekg.load [--reset] [--limit-assets N] [--postgres]
 
 Sources (all read-only, from the services-ops-intelligence checkout named by
 SOIS_REPO): the enterprise CSVs under data/enterprise/, the per-drive summary
-from Postgres (telemetry_drive_summary; falls back to data/parquet/
-drive_summary.parquet with --no-postgres), the last SMART 5/187/197 raw values
+from data/parquet/drive_summary.parquet (or Postgres telemetry_drive_summary
+with --postgres; the same table), the last SMART 5/187/197 raw values
 per drive from the daily Parquet (DuckDB, one pass), and Project 1's calibrated
 30-day failure probability per drive from models/test_scores.parquet (last
 scored date). Daily telemetry rows stay out of the graph.
@@ -115,6 +115,7 @@ def records(df: pd.DataFrame) -> list[dict]:
 
 def account_record_rows(acc: pd.DataFrame) -> list[dict]:
     df = acc.rename(columns={"account_row_id": "row_id", "account_name": "name"})
+    df["row_id"] = df["row_id"].astype(int)
     df["name_norm"] = df["name"].map(normalize_name)
     return records(df[["row_id", "account_id", "name", "name_norm", "industry", "region", "source_system"]])
 
@@ -353,7 +354,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--reset", action="store_true", help="delete every node first")
     ap.add_argument("--limit-assets", type=int, default=None, help="load only the first N assets (smoke runs)")
-    ap.add_argument("--no-postgres", action="store_true", help="read the drive summary from Parquet instead of Postgres")
+    ap.add_argument("--postgres", action="store_true", help="read the drive summary from Postgres telemetry_drive_summary instead of Parquet "
+                    "(opt-in: on this machine Project 1's Postgres holds its 6-row test fixture, see README)")
     ap.add_argument("--no-smart", action="store_true", help="skip the Parquet pass for last SMART values")
     ap.add_argument("--report", type=Path, default=Path("reports/load_counts.json"))
     a = ap.parse_args(argv)
@@ -364,7 +366,7 @@ def main(argv: list[str] | None = None) -> int:
     d = read_enterprise(s.enterprise_dir, a.limit_assets)
     d["case_truth"] = pd.read_csv(s.truth_dir / "case_truth.csv", usecols=["case_id", "deflectable", "true_hardware_fault", "linked_to_telemetry_failure"])
     d["drive_model"] = pd.read_parquet(s.parquet_dir / "drive_model.parquet")
-    drives = read_drive_summary(s, use_postgres=not a.no_postgres, log=log)
+    drives = read_drive_summary(s, use_postgres=a.postgres, log=log)
     if a.limit_assets:
         keep = set(d["installed_asset"]["serial_number"].map(normalize_serial))
         drives = drives[drives["serial_number"].isin(keep)]

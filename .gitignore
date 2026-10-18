@@ -7,3 +7,7 @@ logs/
 reports/asset_embeddings.parquet
 reports/*.tmp
 .cache/
+
+# Vercel link and local site screenshots
+.vercel/
+site/screenshots/

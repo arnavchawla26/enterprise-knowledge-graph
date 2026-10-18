@@ -184,6 +184,10 @@ make api                                 # context API on :8008
 `make eval-live` calls the model backends for uncached prompts (`NVIDIA_API_KEY`,
 `ANTHROPIC_API_KEY`). The Kibana screenshot needs `uv run playwright install chromium` once.
 
+## Results page
+
+`site/` is a static page of the results in this README, built by `scripts/build_site.py` from `reports/` and `docs/`. The script writes `site/data/*.json` and `site/img/*`; `site/index.html`, `app.js` and `style.css` are hand-written and read those files. `vercel.json` serves the folder as-is, so nothing is computed at request time. Rebuild the page after regenerating reports.
+
 ## Layout
 
 ```

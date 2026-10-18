@@ -1,0 +1,5 @@
+*
+!site
+!site/**
+!vercel.json
+site/screenshots
